@@ -1,0 +1,43 @@
+@font-face{
+    font-family: 'GoldScreenFont';
+    src: url('assets/logofont.ttf');
+}
+
+@font-face{
+    font-family: 'TitleFont';
+    src: url('assets/titlefont.otf');
+}
+
+/* logo */
+h1 {
+    text-align: center;
+    color: #E19B01;
+    font-family: 'GoldScreenFont';
+    font-size: 60px;
+}
+
+/*adjust link looks*/
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* nav bar */
+.nav-bar{
+    display: flex;
+    justify-content: left;
+    align-items: baseline;
+    gap: 15px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    text-align: center;
+    color: #A3061C;
+    font-family: 'TitleFont';
+    font-size: 25px;
+    margin: 10px;
+}
+
+/* gold: #E19B01 */
+/* red: #A3061C */
