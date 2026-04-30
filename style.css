@@ -13,7 +13,7 @@ h1 {
     text-align: center;
     color: #E19B01;
     font-family: 'GoldScreenFont';
-    font-size: 60px;
+    font-size: 50px;
 }
 
 /*adjust link looks*/
@@ -26,17 +26,31 @@ a {
 .nav-bar{
     display: flex;
     justify-content: left;
-    align-items: baseline;
-    gap: 15px;
+    align-items: center;
+    gap: 10px;
     box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
 }
 
+.nav-links {
+    display: flex;
+    align-items: bottom;
+    gap: 10px;
+    height: 100%;
+}
+
 .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     color: #A3061C;
     font-family: 'TitleFont';
-    font-size: 25px;
-    margin: 10px;
+    font-size: 15px;
+    background-image: url('assets/border.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 20px 20px;
 }
 
 /* gold: #E19B01 */
