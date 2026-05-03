@@ -148,7 +148,7 @@ a {
 
 /* the box for each movie */
 .movie-box {
-    background: black; /* Makes the 'film' part black like your screenshot */
+    background: #111; /* Makes the 'film' part black like your screenshot */
     width: 500px; 
     aspect-ratio: 16 / 9;
     padding: 20px;

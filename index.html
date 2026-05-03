@@ -146,8 +146,8 @@
     const frames = document.querySelectorAll('.movie-box');
 
     frames.forEach(frame => {
-        // Generate a random number between -6 and 6
-        const randomTilt = (Math.random() * 12 - 6).toFixed(2);
+        // Generate a random number between -3 and 3
+        const randomTilt = (Math.random() * 4 - 2).toFixed(2);
         
         // Apply it directly to the element's style
         frame.style.transform = `rotate(${randomTilt}deg)`;
