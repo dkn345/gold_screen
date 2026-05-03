@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Gold Screen</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="istyle.css">
 </head>
 <body>
 
@@ -47,39 +47,90 @@
      this is where the movies button goes btw -->
     <div id="movies-grid" class="movies-grid">
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
+            </div>
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
+
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
+            </div>
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
+
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
+            </div>
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
+
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
+            </div>
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
+
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
+            </div>
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
+
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
+            </div>
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
+
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
+            </div>
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
+
         <div class="movie-box">
-            <div class="movie-content">
+            <div class="movie-poster">
+                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
             </div>
-        </div>
-        <div class="movie-box">
-            <div class="movie-content">
+            <div class="text">
+                <p class="name">The Great Gatsby</p>
+                <p class="details"> R | 2h 23m </p>
+                <button class="book">Get Tickets</button>
             </div>
         </div>
     </div>
@@ -87,3 +138,24 @@
 </body>
 
 </html>
+
+
+<script>
+    // script for the sake of random tilting the movie boxes because why the hell not
+    // Find all movie boxes
+    const frames = document.querySelectorAll('.movie-box');
+
+    frames.forEach(frame => {
+        // Generate a random number between -6 and 6
+        const randomTilt = (Math.random() * 12 - 6).toFixed(2);
+        
+        // Apply it directly to the element's style
+        frame.style.transform = `rotate(${randomTilt}deg)`;
+
+        // also for vertical differences
+        const randomOffset = (Math.random() * 20 - 10).toFixed(2);
+        frame.style.marginTop = `${randomOffset}px`;
+    });
+
+
+</script>
