@@ -2,17 +2,9 @@
   <title id="title">Gold lock icon</title>
   <desc id="desc">A stylized gold padlock icon.</desc>
 
-  <defs>
-    <linearGradient id="goldBody" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#f7d76a"/>
-      <stop offset="55%" stop-color="#e3b42c"/>
-      <stop offset="100%" stop-color="#c48b00"/>
-    </linearGradient>
-  </defs>
-
   <path d="M40 56V40c0-13.3 10.7-24 24-24s24 10.7 24 24v16h-10V40c0-7.7-6.3-14-14-14s-14 6.3-14 14v16H40z"
-        fill="url(#goldBody)"/>
-  <rect x="30" y="56" width="68" height="56" rx="12" ry="12" fill="url(#goldBody)"/>
-  <circle cx="64" cy="84" r="8" fill="#d29b14"/>
-  <rect x="60" y="84" width="8" height="14" rx="4" fill="#d29b14"/>
+        fill="#E19B01"/>
+  <rect x="30" y="56" width="68" height="56" rx="12" ry="12" fill="#E19B01"/>
+  <circle cx="64" cy="84" r="8" fill="#E19B01"/>
+  <rect x="60" y="84" width="8" height="14" rx="4" fill="#E19B01"/>
 </svg>
