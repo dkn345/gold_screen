@@ -32,8 +32,8 @@ html, body {
     justify-content: center;    /*horizontal*/
     position: relative;
     overflow: hidden;
-    margin: 80px 0;
-    padding: 60px 0;
+    margin: 60px 0 10px 0;
+    padding: 80px 0;
     background: url('assets/backdrop.png') center/cover no-repeat;
 }
 
@@ -97,16 +97,13 @@ a {
     z-index: 1000;
 }
 
+/* adjusting page links */
 .nav-links {
     display: flex;
     align-items: flex-end;
-    gap: 10px;
+    gap: 30px;
     height: 100%;
-}
-
-.nav-links .nav-link{
     color: var(--gold);
-    text-decoration: none;
     padding: 12px 12px;
     border-radius: 8px;
     font-weight: 700;
@@ -114,71 +111,33 @@ a {
     font-size: clamp(20px, 3.2vw, 25px);
 }
 
-.nav-links .nav-link:hover,
-.nav-links .nav-link:focus-visible{
+/* page link hover */
+.nav-links .nav-link:hover{
     color: var(--red);
 }
 
+/* the three icon links */
 .nav-actions {
     margin-left: auto;
     display: flex;
     align-items: flex-end;
-    gap: 14px;
-    padding-right: 24px;
+    gap: 10px;
+    height: 100%;
 }
 
-.nav-profile-link,
-.nav-cart-link,
-.nav-admin-link {
-    display: flex;
-    align-items: center;
-}
-
-.nav-profile-link:hover img,
-.nav-profile-link:focus-visible img,
-.nav-cart-link:hover img,
-.nav-cart-link:focus-visible img,
-.nav-admin-link:hover img,
-.nav-admin-link:focus-visible img {
-    /* deeper red tint approximating var(--red) */
+/* three icon hover */
+.nav-action:hover {
     filter: sepia(1) saturate(8) hue-rotate(-18deg) brightness(0.66) contrast(1.05);
 }
-
-/* style right-side action links like test.html buttons */
-.nav-actions a:not(.nav-profile-link):not(.nav-cart-link):not(.nav-admin-link) {
-    font-family: 'TitleFont';
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 2px solid var(--gold);
-    background: var(--gold);
-    color: var(--red);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-}
-.nav-actions a.admin{
-    background: transparent;
-    border-color: rgba(0,0,0,0.06);
-    color: #222;
-}
-
-.nav-cart-link {
-    align-self: auto;
-}
-
-/* gold: #E19B01 */
-/* red: #A3061C */
-/* light yellow: #FEFCEE */
 
 /* movies grid */
 .movies-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     padding: 32px 32px;
-    max-width: 80%;
-    margin: 0 auto;
+    max-width: 100%;
+    background-color: var(--cream);
 }
 
 .movie-box {
