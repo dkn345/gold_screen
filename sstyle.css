@@ -1,0 +1,100 @@
+@font-face{
+    font-family: 'GoldScreenFont';
+    src: url('assets/logofont.ttf');
+}
+
+@font-face{
+    font-family: 'TitleFont';
+    src: url('assets/titlefont.otf');
+}
+
+html, body {
+    margin: 0;
+    min-height: 100%;
+    padding-top: 27px;
+    background-color: var(--cream);
+    scroll-behavior: smooth; /* enables smooth scrolling for anchor links */
+}
+
+/* save colors */
+:root{
+    --gold: #E19B01;
+    --red: #A3061C;
+    --cream: #FEFCEE;
+    --gray: #333333;
+    --nav-height: 84px;
+}
+
+/* logo */
+h1 {
+    width: 100%;
+    text-align: center;
+    color: var(--gold);
+    font-family: 'GoldScreenFont';
+    font-size: 80px;
+    margin: 0;
+}
+
+h2{
+    width: 100%;
+    text-align: center;
+    font-family: 'TitleFont';
+    font-size: 25px;
+    color: var(--gold)
+}
+
+/*adjust link looks*/
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* nav bar */
+.nav-bar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 25px;
+    background-color: var(--cream);
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+/* adjusting page links */
+.nav-links {
+    display: flex;
+    align-items: flex-end;
+    gap: 30px;
+    height: 100%;
+    color: var(--gold);
+    padding: 12px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'TitleFont';
+    font-size: clamp(20px, 3.2vw, 25px);
+}
+
+/* page link hover */
+.nav-links .nav-link:hover{
+    color: var(--red);
+}
+
+/* the three icon links */
+.nav-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 100%;
+}
+
+/* three icon hover */
+.nav-action:hover {
+    filter: sepia(1) saturate(8) hue-rotate(-18deg) brightness(0.66) contrast(1.05);
+}

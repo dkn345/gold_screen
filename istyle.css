@@ -13,6 +13,7 @@ html, body {
     min-height: 100%;
     padding-top: 27px;
     background-color: var(--cream);
+    scroll-behavior: smooth; /* enables smooth scrolling for anchor links */
 }
 
 /* save colors */
@@ -174,6 +175,7 @@ a {
 .movie-poster{
     width: 80%;       /* Leave a little black border visible around the image */
     overflow: hidden;
+    background: #111;
 }
 
 /* the picture itself */

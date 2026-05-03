@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gold Screen | Showtimes</title>
+<link rel="stylesheet" href="hstyle.css">
+<style>
+	:root {
+		--gold: #E19B01;
+		--red: #A3061C;
+		--cream: #FEFCEE;
+		--ink: #271913;
+		--soft-shadow: 0 18px 45px rgba(39, 25, 19, 0.12);
+	}
+
+	html, body {
+		margin: 0;
+		min-height: 100%;
+		padding-top: var(--nav-height);
+		background:
+			radial-gradient(circle at 50% 0%, rgba(255, 248, 214, 0.75) 0, rgba(255, 248, 214, 0.08) 24%, transparent 42%),
+			linear-gradient(180deg, #fefcee 0%, #f7ecd0 100%);
+		color: var(--ink);
+		overflow-x: hidden;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.page {
+		position: relative;
+		isolation: isolate;
+	}
+
+	.page::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		background:
+			linear-gradient(90deg, rgba(161, 6, 28, 0.07) 0 8%, transparent 8% 92%, rgba(161, 6, 28, 0.07) 92% 100%),
+			repeating-linear-gradient(90deg, rgba(39, 25, 19, 0.02) 0 1px, transparent 1px 16px);
+		mix-blend-mode: multiply;
+		opacity: 0.55;
+		z-index: -1;
+	}
+
+	.hero-stage {
+		position: relative;
+		padding: 44px 24px 28px;
+		overflow: hidden;
+	}
+
+	.hero-stage::before,
+	.hero-stage::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		width: 20vw;
+		height: 100%;
+		background: linear-gradient(180deg, rgba(161, 6, 28, 0.95) 0%, rgba(108, 8, 18, 0.98) 100%);
+		box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.22);
+		z-index: 0;
+	}
+
+	.hero-stage::before { left: 0; clip-path: polygon(0 0, 100% 0, 78% 18%, 100% 36%, 76% 54%, 100% 74%, 80% 100%, 0 100%); }
+	.hero-stage::after { right: 0; clip-path: polygon(100% 0, 0 0, 22% 18%, 0 36%, 24% 54%, 0 74%, 20% 100%, 100% 100%); }
+
+	.hero-card {
+		position: relative;
+		z-index: 1;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 34px 28px 30px;
+		border: 3px solid rgba(161, 6, 28, 0.14);
+		background:
+			radial-gradient(circle at top center, rgba(225, 155, 1, 0.16), transparent 32%),
+			linear-gradient(180deg, rgba(254, 252, 238, 0.96), rgba(247, 234, 206, 0.94));
+		box-shadow: var(--soft-shadow);
+		backdrop-filter: blur(4px);
+	}
+
+	.hero-topline {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+		margin-bottom: 18px;
+	}
+
+	.hero-topline .eyebrow {
+		font-family: 'TitleFont';
+		text-transform: uppercase;
+		letter-spacing: 0.28em;
+		font-size: 0.76rem;
+		color: var(--red);
+	}
+
+	.hero-title {
+		margin: 0;
+		font-family: 'GoldScreenFont';
+		font-size: clamp(3rem, 7vw, 6rem);
+		line-height: 0.9;
+		color: var(--gold);
+		text-shadow: 0 3px 0 rgba(39, 25, 19, 0.22);
+	}
+
+	.hero-subtitle {
+		margin: 12px 0 0;
+		max-width: 68ch;
+		font-family: 'TitleFont';
+		font-size: 1.02rem;
+		line-height: 1.55;
+		color: #513b2c;
+	}
+
+	.playbill-divider {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		align-items: center;
+		gap: 14px;
+		margin-top: 24px;
+		padding-top: 18px;
+		border-top: 1px solid rgba(161, 6, 28, 0.16);
+	}
+
+	.playbill-divider::before,
+	.playbill-divider::after {
+		content: "";
+		height: 1px;
+		background: linear-gradient(90deg, transparent, rgba(225, 155, 1, 0.8), transparent);
+	}
+
+	.playbill-badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 9px 14px 7px;
+		border-radius: 999px;
+		border: 1px solid rgba(161, 6, 28, 0.14);
+		background: rgba(254, 252, 238, 0.72);
+		color: var(--red);
+		font-family: 'TitleFont';
+		text-transform: uppercase;
+		letter-spacing: 0.22em;
+		font-size: 0.7rem;
+	}
+
+	.spotlight-strip {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		gap: 16px;
+		align-items: center;
+		margin-top: 24px;
+		padding-top: 18px;
+		border-top: 1px solid rgba(161, 6, 28, 0.16);
+	}
+
+	.spotlight-copy {
+		font-family: 'TitleFont';
+		font-size: 0.95rem;
+		color: #5c4636;
+	}
+
+	.date-flyout {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		justify-self: end;
+		font-family: 'TitleFont';
+		color: var(--red);
+	}
+
+	.date-pill {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 9ch;
+		padding: 10px 14px;
+		border-radius: 999px;
+		background: rgba(225, 155, 1, 0.12);
+		border: 1px solid rgba(225, 155, 1, 0.35);
+	}
+
+	.schedule-wrap {
+		max-width: 1200px;
+		margin: 26px auto 72px;
+		padding: 0 24px 40px;
+	}
+
+	.day-picker {
+		display: flex;
+		gap: 10px;
+		overflow-x: auto;
+		padding: 4px 2px 12px;
+		margin-bottom: 22px;
+		scrollbar-width: thin;
+	}
+
+	.day-picker::-webkit-scrollbar {
+		height: 8px;
+	}
+
+	.day-picker::-webkit-scrollbar-thumb {
+		background: rgba(161, 6, 28, 0.22);
+		border-radius: 999px;
+	}
+
+	.day-chip {
+		flex: 0 0 auto;
+		cursor: pointer;
+		border: 2px solid rgba(161, 6, 28, 0.15);
+		background: rgba(254, 252, 238, 0.9);
+		color: var(--red);
+		font-family: 'TitleFont';
+		font-size: 0.92rem;
+		padding: 11px 14px;
+		border-radius: 999px;
+		box-shadow: 0 4px 10px rgba(39, 25, 19, 0.08);
+		transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+		white-space: nowrap;
+	}
+
+	.day-chip:hover,
+	.day-chip:focus-visible {
+		transform: translateY(-2px);
+		border-color: var(--red);
+	}
+
+	.day-chip.is-selected {
+		background: var(--red);
+		color: var(--cream);
+		border-color: var(--red);
+	}
+
+	.schedule-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		gap: 16px;
+		margin: 0 0 6px;
+	}
+
+	.schedule-header h2 {
+		margin: 0;
+		font-family: 'GoldScreenFont';
+		font-size: clamp(2rem, 4vw, 3.25rem);
+		color: var(--red);
+		text-shadow: 0 2px 0 rgba(254, 252, 238, 0.7);
+	}
+
+	.schedule-header p {
+		margin: 0;
+		max-width: 42ch;
+		font-family: 'TitleFont';
+		color: #6a4e3a;
+		text-align: right;
+	}
+
+	.movie-list {
+		display: grid;
+		gap: 18px;
+	}
+
+	.stage-layout {
+		display: grid;
+		grid-template-columns: minmax(300px, 0.95fr) minmax(0, 1.35fr);
+		gap: 24px;
+		align-items: start;
+	}
+
+	.featured-card {
+		position: sticky;
+		top: calc(var(--nav-height) + 18px);
+		padding: 20px;
+		border-radius: 20px;
+		border: 2px solid rgba(161, 6, 28, 0.16);
+		background:
+			radial-gradient(circle at top center, rgba(225, 155, 1, 0.18), transparent 30%),
+			linear-gradient(180deg, rgba(254, 252, 238, 0.98), rgba(247, 234, 206, 0.96));
+		box-shadow: var(--soft-shadow);
+		overflow: hidden;
+	}
+
+	.featured-card::before {
+		content: "";
+		position: absolute;
+		inset: 12px;
+		border: 1px solid rgba(225, 155, 1, 0.28);
+		border-radius: 14px;
+		pointer-events: none;
+	}
+
+	.featured-topline {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		align-items: center;
+		margin-bottom: 16px;
+	}
+
+	.featured-kicker {
+		font-family: 'TitleFont';
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		font-size: 0.68rem;
+		color: var(--red);
+	}
+
+	.featured-ribbon {
+		padding: 7px 10px 6px;
+		border-radius: 999px;
+		background: rgba(161, 6, 28, 0.08);
+		font-family: 'TitleFont';
+		font-size: 0.72rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--red);
+	}
+
+	.featured-poster {
+		position: relative;
+		min-height: 420px;
+		border-radius: 18px;
+		overflow: hidden;
+		background:
+			radial-gradient(circle at 50% 20%, rgba(255, 235, 181, 0.42), transparent 28%),
+			linear-gradient(180deg, #26121d 0%, #5d0c11 48%, #e19b01 165%);
+		border: 2px solid rgba(225, 155, 1, 0.58);
+		box-shadow: inset 0 0 0 1px rgba(254, 252, 238, 0.48);
+	}
+
+	.featured-poster::before {
+		content: attr(data-initials);
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		font-family: 'GoldScreenFont';
+		font-size: clamp(4rem, 12vw, 7rem);
+		color: rgba(254, 252, 238, 0.96);
+		text-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+	}
+
+	.featured-billcopy {
+		position: relative;
+		z-index: 1;
+		margin-top: 16px;
+		display: grid;
+		gap: 8px;
+	}
+
+	.featured-title {
+		margin: 0;
+		font-family: 'GoldScreenFont';
+		font-size: clamp(2.25rem, 5vw, 3.6rem);
+		line-height: 0.94;
+		color: var(--red);
+	}
+
+	.featured-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px 16px;
+		font-family: 'TitleFont';
+		color: #5a4435;
+	}
+
+	.featured-meta strong {
+		color: var(--red);
+	}
+
+	.featured-note {
+		margin: 6px 0 0;
+		font-family: 'TitleFont';
+		line-height: 1.55;
+		color: #604635;
+	}
+
+	.schedule-panel {
+		position: relative;
+		display: grid;
+		gap: 18px;
+		padding: 18px;
+		border-radius: 20px;
+		border: 2px solid rgba(161, 6, 28, 0.14);
+		background:
+			linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(250, 241, 219, 0.94));
+		box-shadow: var(--soft-shadow);
+	}
+
+	.schedule-panel::before {
+		content: "";
+		position: absolute;
+		inset: 12px;
+		border: 1px solid rgba(225, 155, 1, 0.22);
+		border-radius: 14px;
+		pointer-events: none;
+	}
+
+	.movie-card {
+		display: grid;
+		grid-template-columns: minmax(168px, 208px) 1fr;
+		gap: 18px;
+		padding: 16px 18px 18px;
+		border-radius: 16px;
+		border: 2px solid rgba(161, 6, 28, 0.14);
+		background:
+			linear-gradient(135deg, rgba(161, 6, 28, 0.05), transparent 24%),
+			linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(250, 241, 219, 0.92));
+		box-shadow: var(--soft-shadow);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.movie-card::before {
+		content: "";
+		position: absolute;
+		inset: 10px;
+		border: 1px solid rgba(225, 155, 1, 0.25);
+		border-radius: 12px;
+		pointer-events: none;
+	}
+
+	.poster {
+		position: relative;
+		min-height: 214px;
+		border-radius: 14px;
+		overflow: hidden;
+		background:
+			radial-gradient(circle at 50% 25%, rgba(255, 235, 181, 0.34), transparent 30%),
+			linear-gradient(180deg, #2b1420 0%, #6c0b12 52%, #e19b01 180%);
+		border: 2px solid rgba(225, 155, 1, 0.5);
+		box-shadow: inset 0 0 0 1px rgba(254, 252, 238, 0.5);
+	}
+
+	.poster::before {
+		content: "PLAYBILL";
+		position: absolute;
+		inset: 16px auto auto 16px;
+		font-family: 'TitleFont';
+		letter-spacing: 0.22em;
+		font-size: 0.68rem;
+		color: rgba(254, 252, 238, 0.84);
+	}
+
+	.poster::after {
+		content: attr(data-initials);
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		font-family: 'GoldScreenFont';
+		font-size: clamp(2.5rem, 7vw, 4.4rem);
+		color: rgba(254, 252, 238, 0.95);
+		text-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+	}
+
+	.movie-meta {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 4px 2px 4px;
+	}
+
+	.movie-headline {
+		display: grid;
+		gap: 6px;
+		padding-bottom: 10px;
+		border-bottom: 1px solid rgba(161, 6, 28, 0.1);
+	}
+
+	.movie-title {
+		margin: 0;
+		font-family: 'GoldScreenFont';
+		font-size: clamp(2rem, 3vw, 2.9rem);
+		line-height: 0.95;
+		color: var(--red);
+	}
+
+	.movie-tag {
+		padding: 4px 0 0;
+		border-radius: 0;
+		background: transparent;
+		color: var(--red);
+		font-family: 'TitleFont';
+		font-size: 0.78rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+	}
+
+	.movie-info {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px 20px;
+		font-family: 'TitleFont';
+		color: #5a4435;
+		font-size: 0.98rem;
+	}
+
+	.movie-info strong {
+		color: var(--red);
+	}
+
+	.showtimes {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 9px;
+		padding-top: 4px;
+	}
+
+	.showtime-btn {
+		cursor: pointer;
+		border: 2px solid var(--gold);
+		background: transparent;
+		color: var(--red);
+		font-family: 'TitleFont';
+		padding: 10px 13px;
+		border-radius: 999px;
+		min-width: 86px;
+		box-shadow: 0 6px 10px rgba(39, 25, 19, 0.06);
+		transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+	}
+
+	.showtime-btn:hover,
+	.showtime-btn:focus-visible {
+		transform: translateY(-2px);
+		background: var(--red);
+		color: var(--cream);
+		border-color: var(--red);
+		box-shadow: 0 10px 16px rgba(161, 6, 28, 0.16);
+	}
+
+	.showtime-btn.is-selected {
+		background: var(--red);
+		color: var(--cream);
+		border-color: var(--red);
+	}
+
+	.playbill-note {
+		margin-top: 18px;
+		font-family: 'TitleFont';
+		text-align: center;
+		color: #6a4e3a;
+		font-size: 0.95rem;
+	}
+
+	.playbill-note strong {
+		color: var(--red);
+	}
+
+	.footer-note {
+		max-width: 1200px;
+		margin: 0 auto 40px;
+		padding: 0 24px;
+		text-align: center;
+		font-family: 'TitleFont';
+		color: #6a4e3a;
+	}
+
+	@media (max-width: 920px) {
+		.hero-stage::before,
+		.hero-stage::after {
+			width: 13vw;
+		}
+
+		.spotlight-strip,
+		.schedule-header,
+		.movie-card,
+		.stage-layout {
+			grid-template-columns: 1fr;
+		}
+
+		.spotlight-strip {
+			justify-items: start;
+		}
+
+		.date-flyout,
+		.schedule-header p {
+			justify-self: start;
+			text-align: left;
+		}
+
+		.movie-card {
+			gap: 16px;
+		}
+
+		.featured-card {
+			position: relative;
+			top: auto;
+		}
+
+		.poster {
+			min-height: 180px;
+		}
+	}
+
+	@media (max-width: 700px) {
+		.hero-stage {
+			padding-inline: 14px;
+		}
+
+		.hero-card,
+		.schedule-wrap,
+		.footer-note {
+			padding-left: 14px;
+			padding-right: 14px;
+		}
+
+		.hero-title {
+			font-size: clamp(2.5rem, 14vw, 4.6rem);
+		}
+
+		.movie-title {
+			font-size: clamp(1.8rem, 8vw, 2.5rem);
+		}
+	}
+</style>
+</head>
+<body>
+<div class="page">
+	<div class="nav-bar">
+		<a href="index.html">
+			<img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+		</a>
+		<div class="nav-links">
+			<a class="nav-link" href="#schedule-anchor">MOVIES</a>
+			<a class="nav-link" href="shows.html">SHOWS</a>
+			<a class="nav-link" href="about.html">ABOUT</a>
+		</div>
+		<div class="nav-actions">
+			<a class="nav-action" href="pages/admin.html">
+				<img src="assets/lock-gold.svg" alt="Admin" width="48" height="48">
+			</a>
+			<a class="nav-action" href="pages/cart.html">
+				<img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+			</a>
+			<a class="nav-action" href="pages/profile.html">
+				<img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+			</a>
+		</div>
+	</div>
+
+	<main>
+		<section class="hero-stage">
+			<div class="hero-card">
+				<div class="hero-topline">
+					<div class="eyebrow">Tonight at the palace</div>
+					<div class="date-flyout">
+						<span class="date-pill" id="current-date-label">Loading date…</span>
+					</div>
+				</div>
+
+				<h1 class="hero-title">Velvet Nights</h1>
+				<h2 class="hero-subtitle">A two-week rolling marquee of every reel, every curtain call, and every cinematic mood under the old Hollywood lights.</h2>
+
+				<div class="playbill-divider" aria-hidden="true">
+					<span class="playbill-badge">Season Playbill</span>
+				</div>
+
+				<div class="spotlight-strip">
+					<div class="spotlight-copy">Select a day to see the theater schedule shift in real time.</div>
+					<div class="spotlight-copy" style="text-align:center; color: var(--red);">Classic cinema . Golden frame . Midnight glow</div>
+					<div class="spotlight-copy" style="text-align:right;">Tap any showtime button to preview your night out.</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="schedule-wrap" id="schedule-anchor">
+			<div class="day-picker" id="day-picker" aria-label="Select a day"></div>
+
+			<div class="stage-layout">
+				<aside class="featured-card">
+					<div class="featured-topline">
+						<div class="featured-kicker">Feature Presentation</div>
+						<div class="featured-ribbon">Now in the spotlight</div>
+					</div>
+					<div class="featured-poster" data-initials="VM"></div>
+					<div class="featured-billcopy">
+						<h3 class="featured-title" id="featured-title">Velvet Moon</h3>
+						<div class="featured-meta" id="featured-meta">
+							<span><strong>Rating</strong> PG</span>
+							<span><strong>Runtime</strong> 1h 54m</span>
+						</div>
+						<p class="featured-note" id="featured-note">The marquee feature updates with the day selection so the left side always feels like the star of the show.</p>
+					</div>
+				</aside>
+
+				<section class="schedule-panel">
+					<div class="schedule-header">
+						<h2>Showtimes</h2>
+						<p id="schedule-subtitle">Choose a date to reveal the screenings for that day.</p>
+					</div>
+
+					<div class="movie-list" id="movie-list"></div>
+					<div class="playbill-note">Arranged in the spirit of a lobby program, with each feature given its own marquee card.</div>
+				</section>
+			</div>
+		</section>
+
+		<div class="footer-note">Two weeks of matinees, intermissions, and late-night encores curated for the velvet seat crowd.</div>
+	</main>
+</div>
+
+<script>
+	const movies = [
+		{
+			title: 'Velvet Moon',
+			rating: 'PG',
+			runtime: '1h 54m',
+			initials: 'VM',
+			showtimes: [
+				['11:10 AM', '1:45 PM', '4:20 PM', '7:05 PM'],
+				['12:15 PM', '3:00 PM', '5:45 PM', '8:30 PM'],
+				['10:55 AM', '2:05 PM', '4:55 PM', '9:00 PM']
+			]
+		},
+		{
+			title: 'The Last Spotlight',
+			rating: 'PG-13',
+			runtime: '2h 08m',
+			initials: 'LS',
+			showtimes: [
+				['11:30 AM', '2:25 PM', '5:10 PM', '8:20 PM'],
+				['12:40 PM', '3:20 PM', '6:05 PM', '9:05 PM'],
+				['10:40 AM', '1:50 PM', '4:35 PM', '7:55 PM']
+			]
+		},
+		{
+			title: 'Midnight on Marigold',
+			rating: 'R',
+			runtime: '2h 02m',
+			initials: 'MM',
+			showtimes: [
+				['12:00 PM', '3:05 PM', '6:15 PM', '9:15 PM'],
+				['11:20 AM', '2:35 PM', '5:55 PM', '8:40 PM'],
+				['1:05 PM', '4:10 PM', '7:05 PM', '9:50 PM']
+			]
+		},
+		{
+			title: 'Clover & Chrome',
+			rating: 'PG',
+			runtime: '1h 42m',
+			initials: 'CC',
+			showtimes: [
+				['10:45 AM', '1:20 PM', '4:05 PM', '6:50 PM'],
+				['11:50 AM', '2:10 PM', '5:15 PM', '8:00 PM'],
+				['12:20 PM', '3:35 PM', '6:40 PM', '9:25 PM']
+			]
+		},
+		{
+			title: 'A Siren at Sunset',
+			rating: 'PG-13',
+			runtime: '2h 11m',
+			initials: 'SS',
+			showtimes: [
+				['11:15 AM', '2:00 PM', '4:50 PM', '7:40 PM'],
+				['12:25 PM', '3:10 PM', '6:20 PM', '9:10 PM'],
+				['10:35 AM', '1:55 PM', '5:05 PM', '8:45 PM']
+			]
+		},
+		{
+			title: 'The Gilded Hour',
+			rating: 'PG',
+			runtime: '1h 36m',
+			initials: 'GH',
+			showtimes: [
+				['11:00 AM', '1:30 PM', '4:00 PM', '6:30 PM'],
+				['12:10 PM', '2:45 PM', '5:25 PM', '8:05 PM'],
+				['10:50 AM', '2:15 PM', '5:00 PM', '8:20 PM']
+			]
+		}
+	];
+
+	const dayPicker = document.getElementById('day-picker');
+	const movieList = document.getElementById('movie-list');
+	const dateLabel = document.getElementById('current-date-label');
+	const subtitle = document.getElementById('schedule-subtitle');
+	const featuredTitle = document.getElementById('featured-title');
+	const featuredMeta = document.getElementById('featured-meta');
+	const featuredNote = document.getElementById('featured-note');
+	const featuredPoster = document.querySelector('.featured-poster');
+
+	const formatter = new Intl.DateTimeFormat(undefined, {
+		weekday: 'long',
+		month: 'long',
+		day: 'numeric'
+	});
+
+	const shortFormatter = new Intl.DateTimeFormat(undefined, {
+		weekday: 'short',
+		month: 'short',
+		day: 'numeric'
+	});
+
+	const today = new Date();
+	let selectedDayIndex = 0;
+
+	function createDate(offset) {
+		const date = new Date(today);
+		date.setDate(today.getDate() + offset);
+		return date;
+	}
+
+	function buildDayPicker() {
+		dayPicker.innerHTML = '';
+
+		for (let i = 0; i <= 14; i += 1) {
+			const date = createDate(i);
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.className = 'day-chip';
+			button.textContent = i === 0 ? `Today · ${shortFormatter.format(date)}` : shortFormatter.format(date);
+			button.setAttribute('aria-pressed', i === selectedDayIndex ? 'true' : 'false');
+
+			if (i === selectedDayIndex) {
+				button.classList.add('is-selected');
+			}
+
+			button.addEventListener('click', () => {
+				selectedDayIndex = i;
+				buildDayPicker();
+				renderMovies();
+			});
+
+			dayPicker.appendChild(button);
+		}
+	}
+
+	function renderMovies() {
+		const selectedDate = createDate(selectedDayIndex);
+		dateLabel.textContent = formatter.format(selectedDate);
+		subtitle.textContent = `Screenings for ${formatter.format(selectedDate)} at The Gold Screen.`;
+		const featuredMovie = movies[selectedDayIndex % movies.length];
+		featuredTitle.textContent = featuredMovie.title;
+		featuredMeta.innerHTML = `
+			<span><strong>Rating</strong> ${featuredMovie.rating}</span>
+			<span><strong>Runtime</strong> ${featuredMovie.runtime}</span>
+		`;
+		featuredNote.textContent = `Today's center-stage feature is ${featuredMovie.title}, the highlight of the marquee for ${formatter.format(selectedDate)}.`;
+		featuredPoster.dataset.initials = featuredMovie.initials;
+		movieList.innerHTML = '';
+
+		movies.forEach((movie, movieIndex) => {
+			const timeSet = movie.showtimes[(selectedDayIndex + movieIndex) % movie.showtimes.length];
+			const card = document.createElement('article');
+			card.className = 'movie-card';
+
+			card.innerHTML = `
+				<div class="poster" data-initials="${movie.initials}"></div>
+				<div class="movie-meta">
+					<div class="movie-headline">
+						<h3 class="movie-title">${movie.title}</h3>
+						<span class="movie-tag">Playbill Feature</span>
+					</div>
+					<div class="movie-info">
+						<span><strong>Rating</strong> ${movie.rating}</span>
+						<span><strong>Runtime</strong> ${movie.runtime}</span>
+					</div>
+					<div class="showtimes" aria-label="Showtimes for ${movie.title}"></div>
+				</div>
+			`;
+
+			const showtimeWrap = card.querySelector('.showtimes');
+
+			timeSet.forEach((time) => {
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'showtime-btn';
+				button.textContent = time;
+				button.addEventListener('click', () => {
+					showtimeWrap.querySelectorAll('.showtime-btn').forEach((other) => other.classList.remove('is-selected'));
+					button.classList.add('is-selected');
+				});
+				showtimeWrap.appendChild(button);
+			});
+
+			movieList.appendChild(card);
+		});
+	}
+
+	buildDayPicker();
+	renderMovies();
+</script>
+</body>
+</html>
