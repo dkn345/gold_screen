@@ -156,6 +156,7 @@ a {
 /* the box for each movie */
 .movie-box {
     background: #111; /* Makes the 'film' part black like your screenshot */
+    border-radius: 10px;
     width: 500px; 
     aspect-ratio: 16 / 9;
     padding: 20px;
