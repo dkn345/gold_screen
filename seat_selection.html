@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seat Selection - The Gold Screen</title>
+<link rel="stylesheet" href="istyle.css?v=4">
+<style>
+    :root {
+        --gold: #E19B01;
+        --red: #A3061C;
+        --cream: #FEFCEE;
+        --black: #111;
+    }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--cream);
+        color: var(--cream);
+        font-family: Georgia, serif;
+        padding-top: 84px;
+    }
+    .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+    .hero {
+        background: var(--black);
+        border-radius: 18px;
+        padding: 28px;
+        display: grid;
+        gap: 18px;
+        box-shadow: 0 14px 30px rgba(0,0,0,.18);
+    }
+    .hero h1 {
+        margin: 0;
+        color: var(--gold);
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1;
+    }
+    .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        color: var(--cream);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        position: relative;
+        z-index: 2;
+    }
+    .grid {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: 1.4fr .8fr;
+        gap: 24px;
+    }
+    .panel {
+        background: var(--black);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 14px 30px rgba(0,0,0,.12);
+    }
+    .screen {
+        height: 18px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #bbb, #eee, #bbb);
+        margin-bottom: 24px;
+    }
+    .seats {
+        display: grid;
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .seat {
+        aspect-ratio: 1 / 1;
+        border-radius: 10px 10px 6px 6px;
+        border: 1px solid var(--gold);
+        background: transparent;
+        color: var(--gold);
+        cursor: pointer;
+        font-weight: 700;
+    }
+    .seat:hover {
+        background: rgba(225,155,1,.12);
+    }
+    .seat.selected {
+        background: var(--gold);
+        color: var(--black);
+    }
+    .seat.taken {
+        background: #333;
+        border-color: #555;
+        color: #777;
+        cursor: not-allowed;
+        text-decoration: line-through;
+    }
+    .seat.vip {
+        border-color: #f4d06f;
+        box-shadow: inset 0 0 0 1px rgba(244, 208, 111, 0.35);
+    }
+    .seat.accessible {
+        border-style: dashed;
+    }
+    .seat-label {
+        display: block;
+        font-size: 0.72rem;
+        line-height: 1;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .summary {
+        display: grid;
+        gap: 14px;
+        color: var(--cream);
+    }
+    .summary h2 {
+        margin: 0 0 8px 0;
+        color: var(--gold);
+    }
+    .summary .item {
+        display: grid;
+        gap: 4px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .ticket-controls {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .ticket-controls input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--gold);
+        background: transparent;
+        color: var(--cream);
+        font-size: 1rem;
+    }
+    .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+    }
+    .btn {
+        border: 1px solid var(--gold);
+        background: transparent;
+        color: var(--gold);
+        padding: 12px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+    }
+    .btn.primary {
+        background: var(--gold);
+        color: var(--black);
+    }
+    .hint {
+        color: var(--gold);
+        font-size: .95rem;
+    }
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 0 0 14px 0;
+        color: var(--cream);
+        font-size: 0.92rem;
+    }
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .legend-swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        border: 1px solid var(--gold);
+        display: inline-block;
+    }
+    .legend-swatch.vip {
+        background: rgba(244, 208, 111, 0.25);
+    }
+    .legend-swatch.accessible {
+        border-style: dashed;
+    }
+    @media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; }
+        .seats { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+        .seats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+</style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="wrap">
+        <div class="hero">
+            <h1 id="movieTitle">Seat Selection</h1>
+            <div class="meta" id="showMeta"></div>
+        </div>
+
+        <div class="grid">
+            <div class="panel">
+                <div class="screen"></div>
+                <div class="legend">
+                    <span class="legend-item"><span class="legend-swatch vip"></span>VIP row</span>
+                    <span class="legend-item"><span class="legend-swatch accessible"></span>Accessible seats</span>
+                    <span class="legend-item"><span class="legend-swatch"></span>Regular seats</span>
+                </div>
+                <div class="seats" id="seatGrid"></div>
+            </div>
+
+            <div class="panel summary">
+                <h2>Tickets</h2>
+                <div class="item">
+                    <div>Selected seats</div>
+                    <strong id="selectedSeatsText">None</strong>
+                </div>
+                <div class="item">
+                    <div>Quantity</div>
+                    <div class="ticket-controls">
+                        <input id="ticketCount" type="number" min="0" value="0" readonly />
+                    </div>
+                </div>
+                <div class="item">
+                    <div>Total</div>
+                    <strong id="totalText">$0.00</strong>
+                </div>
+                <div class="hint">Choose your seats, then continue to add tickets to your cart.</div>
+                <div class="actions">
+                    <button class="btn" onclick="history.back()">Back</button>
+                    <button class="btn primary" id="continueBtn">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const movieTitle = params.get('movie_title') || 'Movie';
+    const date = params.get('date') || '';
+    const time = params.get('time') || '';
+    const room = params.get('room') || '';
+    const movieId = params.get('movie_id') || '';
+    const showtimeId = params.get('showtime_id') || '';
+
+    document.getElementById('movieTitle').textContent = movieTitle;
+    document.getElementById('showMeta').innerHTML = `
+        <span>Date: ${date}</span>
+        <span>Time: ${time}</span>
+        <span>Room: ${room}</span>
+    `;
+
+    const seatGrid = document.getElementById('seatGrid');
+    const selectedSeats = new Set();
+    const seatsPerRow = 10;
+    let roomCapacity = 48;
+    let takenSeats = new Set();
+
+    function hashSeed(value) {
+        let hash = 0;
+        const text = String(value || '');
+        for (let index = 0; index < text.length; index++) {
+            hash = ((hash << 5) - hash) + text.charCodeAt(index);
+            hash |= 0;
+        }
+        return Math.abs(hash);
+    }
+
+    function getRowLabels(count) {
+        const labels = [];
+        for (let index = 0; index < count; index++) {
+            labels.push(String.fromCharCode(65 + index));
+        }
+        return labels;
+    }
+
+    function getAllSeatIds(capacity) {
+        const rowCount = Math.ceil(capacity / seatsPerRow);
+        const rowLabels = getRowLabels(rowCount);
+        const seats = [];
+
+        for (const row of rowLabels) {
+            for (let num = 1; num <= seatsPerRow; num++) {
+                seats.push(`${row}${num}`);
+                if (seats.length >= capacity) {
+                    return seats;
+                }
+            }
+        }
+
+        return seats;
+    }
+
+    function buildTakenSeats(allSeats) {
+        const seatIds = [];
+        const seedValue = `${movieId}|${showtimeId}|${room}|${date}`;
+        let current = hashSeed(seedValue);
+        const blockedCount = Math.max(3, Math.min(8, Math.round(allSeats.length * 0.08)));
+
+        while (seatIds.length < blockedCount && allSeats.length) {
+            current = (current * 1664525 + 1013904223) % 4294967296;
+            const candidate = allSeats[current % allSeats.length];
+            if (!seatIds.includes(candidate)) {
+                seatIds.push(candidate);
+            }
+        }
+
+        return new Set(seatIds);
+    }
+
+    function renderSeats() {
+        const seats = [];
+        const rowLabels = getRowLabels(Math.ceil(roomCapacity / seatsPerRow));
+        const allSeats = getAllSeatIds(roomCapacity);
+        takenSeats = buildTakenSeats(allSeats);
+        
+        // 1. Move accessible seats to the front row (Index 0 / Row A)
+        const accessibleRow = rowLabels[0]; 
+        
+        // 2. Move VIP seats to the middle row dynamically
+        const middleIndex = Math.floor(rowLabels.length / 2);
+        const vipRow = rowLabels[middleIndex]; 
+
+        const accessibleSeats = new Set([
+            `${accessibleRow}1`,
+            `${accessibleRow}2`,
+            `${accessibleRow}3`
+        ]);
+
+        for (const row of rowLabels) {
+            for (let num = 1; num <= seatsPerRow; num++) {
+                const id = `${row}${num}`;
+                if (!allSeats.includes(id)) {
+                    continue;
+                }
+                const taken = takenSeats.has(id);
+                const selected = selectedSeats.has(id);
+                const isVip = row === vipRow;
+                const isAccessible = accessibleSeats.has(id);
+                
+                // Allow label to show whichever applies
+                const seatLabel = isVip ? 'VIP' : (isAccessible ? 'ACCESS' : '');
+                
+                seats.push(`<button class="seat ${taken ? 'taken' : ''} ${selected ? 'selected' : ''} ${isVip ? 'vip' : ''} ${isAccessible ? 'accessible' : ''}" data-seat="${id}" ${taken ? 'disabled' : ''}>${id}${seatLabel ? `<span class="seat-label">${seatLabel}</span>` : ''}</button>`);
+            }
+        }
+        seatGrid.innerHTML = seats.join('');
+    }
+
+    async function loadAuditoriumCapacity() {
+        try {
+            const response = await fetch(`http://localhost:3000/api/auditoriums/${encodeURIComponent(room)}`);
+            if (!response.ok) throw new Error('Failed to fetch auditorium');
+            const auditorium = await response.json();
+            roomCapacity = Number(auditorium.max_capacity) || 48;
+            document.getElementById('showMeta').innerHTML = `
+                <span>Date: ${date}</span>
+                <span>Time: ${time}</span>
+                <span>Room: ${room}</span>
+                <span>Seats: ${roomCapacity}</span>
+            `;
+        } catch (error) {
+            console.error(error);
+            roomCapacity = 48;
+        }
+    }
+
+    const REGULAR_PRICE = 12.50;
+    const VIP_PRICE = 18.00;
+
+    function updateSummary() {
+        const ticketCount = selectedSeats.size;
+        
+        // Recalculate which row is VIP to check against selected seats
+        const rowLabels = getRowLabels(Math.ceil(roomCapacity / seatsPerRow));
+        const middleIndex = Math.floor(rowLabels.length / 2);
+        const vipRow = rowLabels[middleIndex];
+
+        let total = 0;
+        selectedSeats.forEach(seatId => {
+            // Check if the seat's row (the first character, e.g., 'C' in 'C5') is the VIP row
+            const row = seatId.charAt(0);
+            if (row === vipRow) {
+                total += VIP_PRICE;
+            } else {
+                total += REGULAR_PRICE;
+            }
+        });
+
+        document.getElementById('selectedSeatsText').textContent = ticketCount ? Array.from(selectedSeats).join(', ') : 'None';
+        document.getElementById('ticketCount').value = String(ticketCount);
+        document.getElementById('totalText').textContent = `$${total.toFixed(2)}`;
+    }
+
+    seatGrid.addEventListener('click', (event) => {
+        const button = event.target.closest('.seat');
+        if (!button || button.disabled) return;
+        const seat = button.dataset.seat;
+        if (selectedSeats.has(seat)) {
+            selectedSeats.delete(seat);
+        } else {
+            selectedSeats.add(seat);
+        }
+        renderSeats();
+        updateSummary();
+    });
+
+    document.getElementById('continueBtn').addEventListener('click', () => {
+        const payload = {
+            showtime_id: showtimeId,
+            movie_id: movieId,
+            movie_title: movieTitle,
+            date,
+            time,
+            room,
+            seats: Array.from(selectedSeats),
+            ticketCount: selectedSeats.size
+        };
+        localStorage.setItem('pendingBooking', JSON.stringify(payload));
+        window.location.href = 'cart.html';
+    });
+
+    (async () => {
+        await loadAuditoriumCapacity();
+        renderSeats();
+        updateSummary();
+    })();
+</script>
+</body>
+</html>

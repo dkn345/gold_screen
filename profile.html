@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - The Gold Screen</title>
+    <link rel="stylesheet" href="../istyle.css">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .profile-info {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .profile-info h2 {
+            color: #d4af37;
+            margin-bottom: 15px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .info-value {
+            color: #666;
+        }
+        .rewards-section {
+            background-color: #fff;
+            border: 2px solid #d4af37;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .rewards-points {
+            font-size: 36px;
+            color: #d4af37;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .login-prompt {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .login-prompt a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="../index.html">
+            <img src="../assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="../index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="../shows.html">SHOWS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html">
+                <img src="../assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="../assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <h1>My Profile</h1>
+        <div id="profile-content">
+            <div class="login-prompt">
+                <p>Please log in to view your profile</p>
+                <p><a href="#" onclick="alert('Login feature coming soon!')">Log In</a> or <a href="#" onclick="alert('Sign Up feature coming soon!')">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script>
+        // Load customer profile (example with customer_id 1)
+        async function loadProfile() {
+            const customerId = localStorage.getItem('customerId') || 1;
+            const customer = await fetchCustomer(customerId);
+            
+            if (!customer) {
+                return;
+            }
+            
+            const profileContent = document.getElementById('profile-content');
+            profileContent.innerHTML = `
+                <div class="profile-info">
+                    <h2>Account Information</h2>
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">${customer.name || 'N/A'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">${customer.email || 'N/A'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Membership ID:</span>
+                        <span class="info-value">${customer.membership_id || 'N/A'}</span>
+                    </div>
+                </div>
+                
+                <div class="rewards-section">
+                    <h2>Rewards Points</h2>
+                    <div class="rewards-points">${customer.reward_points || 0}</div>
+                    <p>Keep watching to earn more points!</p>
+                </div>
+            `;
+        }
+        
+        window.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+</body>
+</html>

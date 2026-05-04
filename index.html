@@ -42,116 +42,43 @@
     <!-- show grid of movies yay! 
      this is where the movies button goes btw -->
     <div id="movies-grid" class="movies-grid">
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
-
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
-
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
-
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
-
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
-
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
-
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
-
-        <div class="movie-box">
-            <div class="movie-poster">
-                <img src="assets/poster1.jpg" alt="The Great Gatsby Poster" width="100%" height="auto">
-            </div>
-            <div class="text">
-                <p class="name">The Great Gatsby</p>
-                <p class="details"> R | 2h 23m </p>
-                <button class="book">Get Tickets</button>
-            </div>
-        </div>
     </div>
 
 </body>
 
 </html>
 
-
+<script src="api.js"></script>
 <script>
-    // script for the sake of random tilting the movie boxes because why the hell not
-    // Find all movie boxes
-    const frames = document.querySelectorAll('.movie-box');
-
-    frames.forEach(frame => {
-        // Generate a random number between -3 and 3
-        const randomTilt = (Math.random() * 4 - 2).toFixed(2);
+    // Load movies from database
+    async function loadMovies() {
+        const movies = await fetchMovies();
+        const moviesGrid = document.getElementById('movies-grid');
         
-        // Apply it directly to the element's style
-        frame.style.transform = `rotate(${randomTilt}deg)`;
-
-        // also for vertical differences
-        const randomOffset = (Math.random() * 20 - 10).toFixed(2);
-        frame.style.marginTop = `${randomOffset}px`;
-    });
-
-
+        movies.forEach(movie => {
+            const movieBox = document.createElement('div');
+            movieBox.className = 'movie-box';
+            movieBox.innerHTML = `
+                <div class="movie-poster">
+                    <img src="assets/poster1.jpg" alt="${movie.title} Poster" width="100%" height="auto">
+                </div>
+                <div class="text">
+                    <p class="name">${movie.title}</p>
+                    <p class="details">${movie.age_rating} | ${movie.runtime}m</p>
+                    <button class="book" onclick="alert('Book tickets for ${movie.title}')">Get Tickets</button>
+                </div>
+            `;
+            
+            // Random tilt effect
+            const randomTilt = (Math.random() * 4 - 2).toFixed(2);
+            movieBox.style.transform = `rotate(${randomTilt}deg)`;
+            const randomOffset = (Math.random() * 20 - 10).toFixed(2);
+            movieBox.style.marginTop = `${randomOffset}px`;
+            
+            moviesGrid.appendChild(movieBox);
+        });
+    }
+    
+    // Load movies when page loads
+    window.addEventListener('DOMContentLoaded', loadMovies);
 </script>
