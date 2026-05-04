@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Gold shopping cart icon</title>
+  <desc id="desc">A stylized gold shopping cart with two wheels.</desc>
+
+  <path d="M12 20h20l11 52c1.3 6.3 6.9 10.8 13.4 10.8h40.8c6 0 11.3-3.8 13.2-9.4l7.9-22.8H43.3"
+        fill="none"
+        stroke="#E19B01"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <path d="M48 38h70l-8.8 24.8c-0.5 1.5-2 2.4-3.6 2.4H55.8c-1.8 0-3.3-1.2-3.7-2.9L48 38z"
+      fill="#E19B01"/>
+
+    <circle cx="58" cy="96" r="10" fill="#E19B01"/>
+    <circle cx="98" cy="96" r="10" fill="#E19B01"/>
+</svg>

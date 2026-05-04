@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Gold star icon</title>
+  <desc id="desc">A five-pointed gold star with a subtle gradient.</desc>
+
+  <path d="M64 10l15.1 30.6 33.8 4.9-24.4 23.8 5.8 33.7L64 87.2 33.7 103l5.8-33.7L15.1 45.5l33.8-4.9L64 10z"
+        fill="#E19B01"/>
+</svg>
