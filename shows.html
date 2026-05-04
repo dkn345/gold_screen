@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gold Screen</title>
+<link rel="stylesheet" href="sstyle.css">
+<link rel="stylesheet" href="istyle.css">
+</head>
+<body>
+
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <!-- goes to start of movies area on main page -->
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="pages/cart.html">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="pages/profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <!-- now for the scroll date thing -->
+     <div class ="scroll-date-container">
+        <button class="scroll-arrow" id="leftButton">&#8249;</button>
+        <div class = "scroller" id="dateScroller">
+            <button class="date-item active">
+                <span class="date-text">Mon</span>
+                <span class="date-text">May 4</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">Tue</span>
+                <span class="date-text">May 5</span>
+            </button>
+            <button class="date-item">
+                <span class="date-text">TUE</span>
+                <span class="date-text">MAY 5</span>
+            </button>
+        </div>
+        <button class="scroll-arrow" id="rightButton">&#8250;</button>
+    </div>
+    
+    <!-- showing card -->
+    <div class="showing">
+        <img src="assets/poster1.jpg" alt="Project Hail Mary Poster" class="movie-poster">
+
+        <div class="schedule-panel">
+            <div class="movie-info">
+                <h2 class="title">Project Hail Mary</h2>
+                <p class="genre-line">Genre: Sci-Fi, Adventure</p>
+            </div>
+
+            <div class="showtimes">
+                <button class="showtime">10:00 AM</button>
+                <button class="showtime">1:00 PM</button>
+                <button class="showtime">4:00 PM</button>
+                <button class="showtime">7:00 PM</button>
+                <button class="showtime">10:00 PM</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- JAVASCRIPT! -->
+    <script>
+        const scroller = document.getElementById('dateScroller');
+        const leftArrow = document.getElementById('leftButton');
+        const rightArrow = document.getElementById('rightButton');
+
+        function scrollLeft() {
+            // Scrolls left by 60% of the visible width
+            const distance = Math.round(scroller.clientWidth * 0.3);
+            console.log('Scrolling left. Current scrollLeft:', scroller.scrollLeft, 'Distance:', distance);
+            scroller.scrollBy({ left: -distance, behavior: 'smooth' });
+        }
+
+        function scrollRight() {
+            // Scrolls right by 60% of the visible width
+            const distance = Math.round(scroller.clientWidth * 0.3);
+            console.log('Scrolling right. Current scrollLeft:', scroller.scrollLeft, 'Distance:', distance);
+            scroller.scrollBy({ left: distance, behavior: 'smooth' });
+        }
+
+        function updateArrowVisibility() {
+        const scrollLeft = scroller.scrollLeft;
+        const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+
+        // Toggle Left Arrow: Show if we've scrolled more than 5px
+        if (scrollLeft > 5) {
+            leftArrow.classList.add('is-visible');
+        } else {
+            leftArrow.classList.remove('is-visible');
+        }
+
+        // Toggle Right Arrow: Show if we aren't at the very end
+        // We use -5 as a "buffer" for sub-pixel rounding
+        if (scrollLeft < maxScroll - 5) {
+            rightArrow.classList.add('is-visible');
+        } else {
+            rightArrow.classList.remove('is-visible');
+        }
+    }
+
+    // Attach click listeners
+    leftArrow.addEventListener('click', scrollLeft);
+    rightArrow.addEventListener('click', scrollRight);
+
+    // 1. Run it immediately so the Right arrow shows up on page load
+    updateArrowVisibility();
+
+    // 2. Run it every time the user scrolls
+    scroller.addEventListener('scroll', updateArrowVisibility);
+    </script>
+</body>
+</html>

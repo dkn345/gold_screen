@@ -13,6 +13,11 @@ html, body {
     min-height: 100%;
     padding-top: 27px;
     background-color: var(--cream);
+    scroll-behavior: smooth; /* enables smooth scrolling for anchor links */
+}
+
+html::-webkit-scrollbar {
+    display: none;
 }
 
 /* save colors */
@@ -20,7 +25,7 @@ html, body {
     --gold: #E19B01;
     --red: #A3061C;
     --cream: #FEFCEE;
-    --gray: #333333;
+    --black: #111;
     --nav-height: 84px;
 }
 
@@ -84,7 +89,7 @@ a {
     color: var(--red);
 }
 
-/* the three icon links */
+/* the icon links */
 .nav-actions {
     margin-left: auto;
     display: flex;
@@ -93,9 +98,9 @@ a {
     height: 100%;
 }
 
-/* three icon hover */
+/* icon hover */
 .nav-action:hover {
-    filter: sepia(1) saturate(8) hue-rotate(-18deg) brightness(0.66) contrast(1.05);
+    filter: sepia(1) saturate(50) hue-rotate(-45deg) brightness(0.50) contrast(1.2);
 }
 
 
@@ -124,13 +129,15 @@ a {
     right: -1px; 
     bottom: -1px;
     
-    background: rgba(255, 255, 255, 0.2); 
+    background: rgba(120, 118, 118, 0.2);
     backdrop-filter: blur(3px);
     z-index: 1;
 }
 
 .hero h1, .hero h2 {
-    text-shadow: 2px 5px 3px rgba(66, 21, 2, 0.3);
+    text-shadow: 
+        2px 2px 5px rgba(0, 0, 0, 0.7), 
+        0px 0px 15px rgba(0, 0, 0, 0.5);
     z-index: 2; /* Ensure text is above the frosted layer */
 }
 
@@ -148,7 +155,8 @@ a {
 
 /* the box for each movie */
 .movie-box {
-    background: black; /* Makes the 'film' part black like your screenshot */
+    background: #111; /* Makes the 'film' part black like your screenshot */
+    border-radius: 10px;
     width: 500px; 
     aspect-ratio: 16 / 9;
     padding: 20px;
@@ -172,6 +180,7 @@ a {
 .movie-poster{
     width: 80%;       /* Leave a little black border visible around the image */
     overflow: hidden;
+    background: #111;
 }
 
 /* the picture itself */
@@ -223,6 +232,7 @@ a {
     appearance: none;
 }
 
+/* book button hover */
 .book:hover {
     color: black;
     background-color: var(--gold);
