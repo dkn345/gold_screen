@@ -108,6 +108,7 @@
             <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
             <a class="nav-link" href="shows.html">SHOWS</a>
             <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+            <a class="nav-link" href="concessions.html">CONCESSIONS</a>
         </div>
         <div class="nav-actions">
             <a class="nav-action" href="cart.html">
@@ -229,6 +230,17 @@
                     const err = await response.json();
                     throw new Error(err.error || 'Checkout failed');
                 }
+                
+                // Save order summary for success page
+                const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discountPct = document.getElementById('checkout-discount-pct').textContent;
+                const finalTotal = document.getElementById('checkout-total').textContent;
+                localStorage.setItem('lastOrder', JSON.stringify({
+                    items: cart,
+                    subtotal: subtotal.toFixed(2),
+                    discountPct: discountPct !== '0' ? discountPct : null,
+                    total: finalTotal
+                }));
                 
                 localStorage.removeItem('cart');
                 window.location.href = 'checkout_success.html';

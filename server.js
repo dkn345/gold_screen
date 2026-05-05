@@ -138,7 +138,7 @@ app.get('/api/show-dates', async (req, res) => {
   try {
     const connection = await pool.getConnection();
     const [dates] = await connection.query(
-      'SELECT DISTINCT DATE_FORMAT(date, "%Y-%m-%d") AS show_date FROM Showtimes WHERE is_active = 1 ORDER BY show_date ASC'
+      'SELECT DISTINCT DATE_FORMAT(date, "%Y-%m-%d") AS show_date FROM Showtimes WHERE is_active = 1 AND date >= CURDATE() ORDER BY show_date ASC'
     );
     connection.release();
     res.json(dates.map((row) => row.show_date));
@@ -337,6 +337,24 @@ app.post('/api/signup', async (req, res) => {
 });
 
 // Admin endpoint for raw queries
+// Order history for a customer
+app.get('/api/customers/:id/orders', async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [orders] = await connection.query(`
+      SELECT p.payment_id, p.total_amount, p.payment_method, p.timestamp
+      FROM Makes mk
+      JOIN Payments p ON mk.payment_id = p.payment_id
+      WHERE mk.customer_id = ?
+      ORDER BY p.timestamp DESC
+    `, [req.params.id]);
+    connection.release();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/admin/query', async (req, res) => {
   const { passcode, query } = req.body;
   

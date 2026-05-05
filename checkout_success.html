@@ -55,6 +55,7 @@
             <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
             <a class="nav-link" href="shows.html">SHOWS</a>
             <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+            <a class="nav-link" href="concessions.html">CONCESSIONS</a>
         </div>
         <div class="nav-actions">
             <a class="nav-action" href="cart.html">
@@ -70,12 +71,64 @@
         <div class="success-icon">✓</div>
         <h1 class="success-title">Order Confirmed!</h1>
         <p class="success-message">
-            Thank you for your purchase. Your payment has been processed successfully and your tickets/items are confirmed.
-            <br><br>
-            We look forward to seeing you at The Gold Screen!
+            Thank you for your purchase! Your payment has been processed successfully.
         </p>
-        <a href="index.html" class="home-btn">Return to Home</a>
+        
+        <div id="order-details" style="text-align: left; background: #1a1a1a; border-radius: 8px; padding: 20px; margin: 25px 0; border: 1px solid #2a2a2a;">
+            <h3 style="margin-top: 0; color: #d4af37;">Order Details</h3>
+            <div id="order-items" style="color: #ccc;"></div>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="home-btn">Return to Home</a>
+            <a href="profile.html" class="home-btn" style="background: transparent; border: 2px solid #d4af37; color: #d4af37;">View Profile</a>
+        </div>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const order = JSON.parse(localStorage.getItem('lastOrder') || 'null');
+            const detailsDiv = document.getElementById('order-items');
+            
+            if (!order || !order.items || order.items.length === 0) {
+                detailsDiv.innerHTML = '<p style="color: #888;">No order details available.</p>';
+                return;
+            }
+
+            let html = '';
+            
+            order.items.forEach(item => {
+                const itemTotal = (item.price * item.quantity).toFixed(2);
+                html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #2a2a2a;">
+                    <span>${item.name} × ${item.quantity}</span>
+                    <span style="color:#d4af37;">$${itemTotal}</span>
+                </div>`;
+            });
+
+            html += `<div style="display:flex; justify-content:space-between; padding:10px 0; margin-top:5px; color:#888;">
+                <span>Subtotal</span>
+                <span>$${order.subtotal}</span>
+            </div>`;
+
+            if (order.discountPct) {
+                const discountAmt = (parseFloat(order.subtotal) - parseFloat(order.total)).toFixed(2);
+                html += `<div style="display:flex; justify-content:space-between; padding:8px 0; color:#d4af37;">
+                    <span>🎟️ Member Discount (${order.discountPct}%)</span>
+                    <span>-$${discountAmt}</span>
+                </div>`;
+            }
+
+            html += `<div style="display:flex; justify-content:space-between; padding:12px 0; margin-top:5px; font-size:1.3rem; font-weight:bold; border-top:2px solid #d4af37; color:#d4af37;">
+                <span>Total Paid</span>
+                <span>$${order.total}</span>
+            </div>`;
+
+            detailsDiv.innerHTML = html;
+            
+            // Clean up
+            localStorage.removeItem('lastOrder');
+        });
+    </script>
     <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
 </body>
 </html>
