@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concessions - The Gold Screen</title>
+    <link rel="stylesheet" href="istyle.css?v=5">
+    <style>
+        :root {
+            --gold: #E19B01;
+            --red: #A3061C;
+            --cream: #FEFCEE;
+            --black: #111;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--cream);
+            color: var(--cream);
+            font-family: Georgia, serif;
+            padding-top: 84px;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .page-title h1 {
+            font-size: 3.5rem;
+        }
+
+        .concessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .item-card {
+            background: var(--black);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, .2);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #333;
+        }
+
+        .item-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .item-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-name {
+            margin: 0 0 10px 0;
+            color: var(--gold);
+            font-size: 1.4rem;
+            font-family: 'TitleFont', sans-serif;
+        }
+
+        .item-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .add-to-cart {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .qty-input {
+            width: 60px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--gold);
+            background: #222;
+            color: var(--cream);
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .btn {
+            border: 1px solid var(--gold);
+            background: var(--gold);
+            color: var(--black);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .add-to-cart .btn {
+            flex-grow: 1;
+        }
+
+        .btn:hover {
+            background: #f4d06f;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+        }
+
+        .continue-bar {
+            background: var(--black);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+            border: 1px solid var(--gold);
+            z-index: 100;
+        }
+
+        .continue-bar h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            width: auto;
+        }
+
+        .btn-large {
+            padding: 14px 30px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html?v=5">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="wrap">
+        <div class="page-title">
+            <h1>Concessions</h1>
+            <p style="color: #333; font-size: 1.1rem;">Enhance your movie experience with our delicious snacks and
+                drinks.</p>
+        </div>
+
+        <div class="concessions-grid" id="concessions-grid">
+            <p style="color: #333; text-align: center; width: 100%;">Loading concessions...</p>
+        </div>
+
+        <div class="continue-bar">
+            <h2>Added to cart: <span id="cart-count">0</span> items</h2>
+            <button class="btn btn-large" onclick="window.location.href='cart.html?v=6'">Continue to Cart</button>
+        </div>
+    </div>
+
+    <script src="api.js?v=5"></script>
+    <script>
+        function getImageForConcession(name) {
+            const n = name.toLowerCase();
+            if (n.includes('popcorn')) return 'assets/popcorn.png?v=5';
+            if (n.includes('nachos')) return 'assets/nachos.png?v=5';
+            if (n.includes('icee')) return 'assets/icee.png?v=5';
+            if (n.includes('candy') || n.includes('sour patch')) return 'assets/candy.png?v=5';
+            if (n.includes('m&m')) return 'assets/mms.png?v=5';
+            if (n.includes('hot dog')) return 'assets/hotdog.png?v=5';
+            if (n.includes('water')) return 'assets/water.png?v=5';
+            return 'assets/popcorn.png?v=5'; // fallback
+        }
+
+        async function loadConcessions() {
+            try {
+                const response = await fetch('http://localhost:3000/api/concessions');
+                const items = await response.json();
+
+                const grid = document.getElementById('concessions-grid');
+                grid.innerHTML = items.map(item => `
+                    <div class="item-card">
+                        <img src="${getImageForConcession(item.name)}" alt="${item.name}" class="item-img">
+                        <div class="item-info">
+                            <h3 class="item-name">${item.name}</h3>
+                            <div class="item-price">$${Number(item.price).toFixed(2)}</div>
+                            <div class="add-to-cart">
+                                <input type="number" id="qty-${item.item_id}" class="qty-input" min="1" max="10" value="1">
+                                <button class="btn" onclick="addToCart(${item.item_id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                document.getElementById('concessions-grid').innerHTML = '<p style="color:red;">Failed to load concessions.</p>';
+            }
+        }
+
+        function addToCart(itemId, name, price) {
+            const qtyInput = document.getElementById(`qty-${itemId}`);
+            const qty = parseInt(qtyInput.value) || 1;
+
+            const cart = getCartFromStorage();
+
+            // Check if this concession is already in cart
+            const existingItem = cart.find(i => i.isConcession && i.id === itemId);
+            if (existingItem) {
+                existingItem.quantity += qty;
+            } else {
+                cart.push({
+                    id: itemId,
+                    name: name,
+                    price: Number(price),
+                    quantity: qty,
+                    isConcession: true // Custom flag to differentiate from tickets
+                });
+            }
+
+            saveCartToStorage(cart);
+            updateCartCount();
+
+            // Give visual feedback
+            const btn = event.target;
+            const origText = btn.textContent;
+            btn.textContent = 'Added!';
+            btn.style.background = '#d4af37';
+            btn.style.color = '#fff';
+            setTimeout(() => {
+                btn.textContent = origText;
+                btn.style.background = 'var(--gold)';
+                btn.style.color = 'var(--black)';
+                qtyInput.value = 1;
+            }, 1000);
+        }
+
+        function updateCartCount() {
+            const cart = getCartFromStorage();
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        function autoAddPendingTickets() {
+            const pending = JSON.parse(localStorage.getItem('pendingBooking') || 'null');
+            if (!pending) return;
+
+            const cart = getCartFromStorage();
+
+            const existingId = pending.showtime_id || `${pending.movie_id}-${pending.date}-${pending.time}-${pending.room}`;
+            const existing = cart.find(i => i.id === existingId && !i.isConcession);
+
+            if (!existing) {
+                cart.push({
+                    id: existingId,
+                    name: `${pending.movie_title} (${pending.date} ${pending.time})`,
+                    price: 12.5,
+                    quantity: Number(pending.ticketCount || 1),
+                    seats: pending.seats || [],
+                    room: pending.room
+                });
+                saveCartToStorage(cart);
+            }
+            localStorage.removeItem('pendingBooking');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            autoAddPendingTickets();
+            loadConcessions();
+            updateCartCount();
+        });
+    </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
+</body>
+
+</html>

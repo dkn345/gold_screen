@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Successful - The Gold Screen</title>
+    <link rel="stylesheet" href="istyle.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 100px auto;
+            text-align: center;
+            padding: 40px;
+            background: #111;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        .success-icon {
+            font-size: 64px;
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+        .success-title {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-family: 'TitleFont', sans-serif;
+        }
+        .success-message {
+            color: #fefcf0;
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .home-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #d4af37;
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .home-btn:hover {
+            background-color: #f0d566;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1 class="success-title">Order Confirmed!</h1>
+        <p class="success-message">
+            Thank you for your purchase. Your payment has been processed successfully and your tickets/items are confirmed.
+            <br><br>
+            We look forward to seeing you at The Gold Screen!
+        </p>
+        <a href="index.html" class="home-btn">Return to Home</a>
+    </div>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
+</body>
+</html>

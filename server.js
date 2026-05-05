@@ -59,7 +59,12 @@ app.get('/api/customers', async (req, res) => {
 app.get('/api/customers/:id', async (req, res) => {
   try {
     const connection = await pool.getConnection();
-    const [customer] = await connection.query('SELECT * FROM Customers WHERE customer_id = ?', [req.params.id]);
+    const [customer] = await connection.query(`
+      SELECT c.*, m.tier_level, m.discount_pct 
+      FROM Customers c 
+      LEFT JOIN Memberships m ON c.membership_id = m.membership_id 
+      WHERE c.customer_id = ?
+    `, [req.params.id]);
     connection.release();
     res.json(customer);
   } catch (error) {
@@ -153,6 +158,240 @@ app.get('/api/showtimes/:movieId', async (req, res) => {
     );
     connection.release();
     res.json(showtimes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/occupied-seats/:showtimeId', async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [books] = await connection.query(`
+      SELECT s.row_letter, s.seat_number 
+      FROM Books b
+      JOIN Seats s ON b.seat_id = s.seat_id
+      WHERE b.showtime_id = ?
+    `, [req.params.showtimeId]);
+    connection.release();
+    
+    const occupied = books.map(b => `${b.row_letter}${b.seat_number}`);
+    res.json(occupied);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/checkout', async (req, res) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    const { cart, customerId } = req.body;
+    
+    let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    let discountPct = 0;
+    let pointsPerDollar = 1; // default for non-members
+    
+    if (customerId) {
+      const [customers] = await connection.query(`
+        SELECT m.discount_pct, m.points_per_dollar 
+        FROM Customers c 
+        LEFT JOIN Memberships m ON c.membership_id = m.membership_id 
+        WHERE c.customer_id = ?
+      `, [customerId]);
+      
+      if (customers.length > 0) {
+        if (customers[0].discount_pct) {
+          discountPct = customers[0].discount_pct;
+          totalAmount = totalAmount * (1 - (discountPct / 100));
+        }
+        if (customers[0].points_per_dollar) {
+          pointsPerDollar = customers[0].points_per_dollar;
+        }
+      }
+    }
+    
+    const [payRows] = await connection.query('SELECT IFNULL(MAX(payment_id), 0) + 1 as nextId FROM Payments');
+    const paymentId = payRows[0].nextId;
+
+    await connection.query(
+      'INSERT INTO Payments (payment_id, total_amount, payment_method) VALUES (?, ?, ?)',
+      [paymentId, totalAmount, 'Credit Card']
+    );
+
+    let [tickRows] = await connection.query('SELECT IFNULL(MAX(ticket_id), 0) + 1 as nextId FROM Tickets');
+    let nextTicketId = tickRows[0].nextId;
+
+    for (const item of cart) {
+      if (item.seats && item.seats.length > 0) {
+        for (const seatStr of item.seats) {
+          const rowLetter = seatStr.charAt(0);
+          const seatNum = parseInt(seatStr.substring(1));
+          
+          const [seats] = await connection.query(
+            'SELECT seat_id FROM Seats WHERE room_number = ? AND row_letter = ? AND seat_number = ?',
+            [item.room, rowLetter, seatNum]
+          );
+          
+          if (seats.length > 0) {
+            const seatId = seats[0].seat_id;
+            const ticketId = nextTicketId++;
+            
+            await connection.query(
+              'INSERT INTO Tickets (ticket_id, payment_id, ticket_category, price) VALUES (?, ?, ?, ?)',
+              [ticketId, paymentId, 'Standard', item.price] 
+            );
+
+            await connection.query(
+              'INSERT INTO Books (ticket_id, seat_id, showtime_id) VALUES (?, ?, ?)',
+              [ticketId, seatId, item.id] 
+            );
+          }
+        }
+      } else if (item.isConcession) {
+        // It's a concession item
+        await connection.query(
+          'INSERT INTO Pays_for (payment_id, item_id, quantity) VALUES (?, ?, ?)',
+          [paymentId, item.id, item.quantity]
+        );
+      }
+    }
+    
+    // Award reward points and link payment to customer
+    if (customerId) {
+      const pointsEarned = Math.floor(totalAmount * pointsPerDollar);
+      await connection.query(
+        'UPDATE Customers SET reward_points = reward_points + ? WHERE customer_id = ?',
+        [pointsEarned, customerId]
+      );
+      
+      // Link payment to customer in Makes table
+      console.log(`Inserting into Makes: customer=${customerId}, payment=${paymentId}`);
+      await connection.query(
+        'INSERT INTO Makes (customer_id, employee_id, payment_id) VALUES (?, 101, ?)',
+        [customerId, paymentId]
+      );
+      console.log('Makes insert successful');
+    }
+    
+    await connection.commit();
+    connection.release();
+    res.json({ success: true });
+  } catch (error) {
+    await connection.rollback();
+    connection.release();
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Auth endpoints (Email only mock login)
+app.post('/api/login', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+
+  try {
+    const connection = await pool.getConnection();
+    const [users] = await connection.query('SELECT * FROM Customers WHERE email = ?', [email]);
+    connection.release();
+
+    if (users.length > 0) {
+      res.json({ success: true, customer: users[0], message: 'Magic link sent! (Mocked: logged in)' });
+    } else {
+      res.status(404).json({ error: 'No account found with that email.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/signup', async (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) return res.status(400).json({ error: 'Name and email are required' });
+
+  try {
+    const connection = await pool.getConnection();
+    
+    // Check if exists
+    const [existing] = await connection.query('SELECT * FROM Customers WHERE email = ?', [email]);
+    if (existing.length > 0) {
+      connection.release();
+      return res.status(400).json({ error: 'Email already registered.' });
+    }
+
+    // Get next ID
+    const [idRows] = await connection.query('SELECT IFNULL(MAX(customer_id), 0) + 1 as nextId FROM Customers');
+    const newId = idRows[0].nextId;
+
+    await connection.query(
+      'INSERT INTO Customers (customer_id, name, email, reward_points) VALUES (?, ?, ?, 0)',
+      [newId, name, email]
+    );
+    
+    const [newUser] = await connection.query('SELECT * FROM Customers WHERE customer_id = ?', [newId]);
+    connection.release();
+
+    res.json({ success: true, customer: newUser[0] });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Admin endpoint for raw queries
+app.post('/api/admin/query', async (req, res) => {
+  const { passcode, query } = req.body;
+  
+  if (passcode !== 'goldadmin') {
+    return res.status(401).json({ error: 'Unauthorized: Invalid passcode' });
+  }
+  
+  if (!query) {
+    return res.status(400).json({ error: 'Query is required' });
+  }
+
+  try {
+    const connection = await pool.getConnection();
+    const [results] = await connection.query(query);
+    connection.release();
+    res.json({ success: true, results });
+  } catch (error) {
+    res.status(400).json({ error: error.message }); // 400 for bad SQL syntax
+  }
+});
+
+// Membership endpoints
+app.get('/api/memberships', async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [memberships] = await connection.query('SELECT * FROM Memberships ORDER BY monthly_cost ASC');
+    connection.release();
+    res.json(memberships);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/customers/:id/upgrade', async (req, res) => {
+  const { membership_id } = req.body;
+  const customerId = req.params.id;
+
+  if (!membership_id) {
+    return res.status(400).json({ error: 'membership_id is required' });
+  }
+
+  try {
+    const connection = await pool.getConnection();
+    await connection.query(
+      'UPDATE Customers SET membership_id = ? WHERE customer_id = ?',
+      [membership_id, customerId]
+    );
+    const [updated] = await connection.query(`
+      SELECT c.*, m.tier_level, m.discount_pct 
+      FROM Customers c 
+      LEFT JOIN Memberships m ON c.membership_id = m.membership_id 
+      WHERE c.customer_id = ?
+    `, [customerId]);
+    connection.release();
+    res.json({ success: true, customer: updated[0] });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

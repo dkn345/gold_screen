@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - The Gold Screen</title>
+    <link rel="stylesheet" href="istyle.css">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--cream);
+            color: var(--cream);
+            font-family: Georgia, serif;
+            padding-top: 84px;
+        }
+
+        .checkout-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background: var(--black);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--gold);
+        }
+
+        h1 {
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .order-summary {
+            background: #111;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #f4d06f;
+        }
+
+        .discount-text {
+            color: var(--gold, #d4af37);
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="checkout-container">
+        <h1>Secure Checkout</h1>
+        
+        <div class="order-summary">
+            <h3 style="margin-top:0; color:#ddd;">Order Summary</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span>Subtotal:</span>
+                <span>$<span id="checkout-subtotal">0.00</span></span>
+            </div>
+            <div id="checkout-discount-row" style="display:flex; justify-content:space-between; margin-bottom:10px;" class="discount-text">
+                <span>Discount (<span id="checkout-discount-pct">0</span>%):</span>
+                <span>-$<span id="checkout-discount-amount">0.00</span></span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:1.4rem; color:var(--gold); font-weight:bold; border-top:1px solid #333; padding-top:10px; margin-top:10px;">
+                <span>Total:</span>
+                <span>$<span id="checkout-total">0.00</span></span>
+            </div>
+        </div>
+
+        <form id="payment-form">
+            <h3 style="color:#ddd; margin-bottom:15px;">Payment Details</h3>
+            
+            <div class="form-group">
+                <label for="cc-name">Name on Card</label>
+                <input type="text" id="cc-name" class="form-control" placeholder="Jane Doe" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="cc-number">Card Number</label>
+                <input type="text" id="cc-number" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" required>
+            </div>
+            
+            <div class="row">
+                <div class="col form-group">
+                    <label for="cc-exp">Expiry (MM/YY)</label>
+                    <input type="text" id="cc-exp" class="form-control" placeholder="12/25" maxlength="5" required>
+                </div>
+                <div class="col form-group">
+                    <label for="cc-cvv">CVV</label>
+                    <input type="password" id="cc-cvv" class="form-control" placeholder="123" maxlength="4" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit" id="pay-button">Pay $<span id="btn-total">0.00</span></button>
+        </form>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        async function loadCheckoutSummary() {
+            const cart = getCartFromStorage();
+            if (cart.length === 0) {
+                window.location.href = 'cart.html';
+                return;
+            }
+
+            let subtotal = 0;
+            cart.forEach(item => {
+                subtotal += (item.price * item.quantity);
+            });
+
+            document.getElementById('checkout-subtotal').textContent = subtotal.toFixed(2);
+
+            let finalTotal = subtotal;
+            const customerId = localStorage.getItem('customerId');
+            
+            if (customerId) {
+                try {
+                    const customerArray = await fetchCustomer(customerId);
+                    const customer = Array.isArray(customerArray) ? customerArray[0] : customerArray;
+                    
+                    if (customer && customer.discount_pct) {
+                        const discountAmount = subtotal * (customer.discount_pct / 100);
+                        finalTotal = subtotal - discountAmount;
+                        
+                        document.getElementById('checkout-discount-pct').textContent = customer.discount_pct;
+                        document.getElementById('checkout-discount-amount').textContent = discountAmount.toFixed(2);
+                        document.getElementById('checkout-discount-row').style.display = 'flex';
+                    }
+                } catch (err) {
+                    console.error("Error fetching discount", err);
+                }
+            }
+            
+            document.getElementById('checkout-total').textContent = finalTotal.toFixed(2);
+            document.getElementById('btn-total').textContent = finalTotal.toFixed(2);
+        }
+
+        document.getElementById('payment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('pay-button');
+            const originalText = btn.innerHTML;
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+
+            const cart = getCartFromStorage();
+            const customerId = localStorage.getItem('customerId');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cart, customerId })
+                });
+                
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Checkout failed');
+                }
+                
+                localStorage.removeItem('cart');
+                window.location.href = 'checkout_success.html';
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Failed to process payment: ' + error.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', loadCheckoutSummary);
+    </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
+</body>
+</html>

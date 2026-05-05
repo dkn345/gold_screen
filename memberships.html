@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memberships - The Gold Screen</title>
+    <link rel="stylesheet" href="istyle.css">
+    <style>
+        :root {
+            --gold: #E19B01;
+            --red: #A3061C;
+            --cream: #FEFCEE;
+            --black: #111;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--black);
+            color: var(--cream);
+            font-family: Georgia, serif;
+            padding-top: 84px;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .tier-card {
+            background: #1a1a1a;
+            border-radius: 18px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 2px solid #333;
+            transition: border-color 0.3s, transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tier-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+
+        .tier-card.featured {
+            border-color: var(--gold);
+        }
+
+        .tier-card.featured::before {
+            content: 'BEST VALUE';
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: var(--gold);
+            color: var(--black);
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 4px 40px;
+            transform: rotate(45deg);
+        }
+
+        .tier-name {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .tier-price {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0 5px;
+        }
+
+        .tier-price span {
+            font-size: 1rem;
+            color: #888;
+        }
+
+        .tier-features {
+            list-style: none;
+            padding: 0;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .tier-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #2a2a2a;
+            color: #ccc;
+        }
+
+        .tier-features li::before {
+            content: '✓ ';
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .btn-subscribe {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-subscribe:hover {
+            background: #f4d06f;
+        }
+
+        .btn-subscribe:active {
+            transform: scale(0.98);
+        }
+
+        .btn-subscribe.current {
+            background: #333;
+            color: #888;
+            cursor: default;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #1a1a1a;
+            border: 1px solid var(--gold);
+            border-radius: 18px;
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-box h2 {
+            color: var(--gold);
+            margin-top: 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-cancel {
+            background: #333;
+            color: #ccc;
+        }
+
+        .btn-confirm {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .btn-confirm:hover {
+            background: #f4d06f;
+        }
+
+        .success-msg {
+            color: var(--gold, #d4af37);
+            font-weight: bold;
+            display: none;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="wrap">
+        <div class="page-header">
+            <h1>Membership Plans</h1>
+            <p>Unlock exclusive discounts and earn rewards faster with a Gold Screen membership.</p>
+        </div>
+
+        <div class="tier-grid" id="tier-grid">
+            <p style="color: #888; text-align: center; width: 100%;">Loading membership tiers...</p>
+        </div>
+    </div>
+
+    <!-- Upgrade Confirmation Modal -->
+    <div class="modal-overlay" id="upgrade-modal">
+        <div class="modal-box">
+            <h2>Upgrade Membership</h2>
+            <p>You are about to subscribe to <strong id="modal-tier-name">—</strong> for <strong id="modal-tier-price">—</strong>/month.</p>
+            <p style="color: #aaa; font-size: 0.9rem;">This will apply immediately to your account.</p>
+            <div id="modal-success" class="success-msg">✓ Membership upgraded successfully!</div>
+            <div class="modal-actions" id="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-confirm" id="modal-confirm-btn" onclick="confirmUpgrade()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        let selectedMembershipId = null;
+        let currentMembershipId = null;
+
+        async function loadTiers() {
+            // Get current user's membership
+            const customerId = localStorage.getItem('customerId');
+            if (customerId) {
+                try {
+                    const customerArray = await fetchCustomer(customerId);
+                    const customer = Array.isArray(customerArray) ? customerArray[0] : customerArray;
+                    if (customer) currentMembershipId = customer.membership_id;
+                } catch(e) {}
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/memberships');
+                const tiers = await response.json();
+                
+                const grid = document.getElementById('tier-grid');
+                grid.innerHTML = tiers.map((tier, i) => {
+                    const isCurrent = tier.membership_id === currentMembershipId;
+                    const isFeatured = i === tiers.length - 1; // Last tier is "best value"
+                    
+                    return `
+                        <div class="tier-card ${isFeatured ? 'featured' : ''}">
+                            <div class="tier-name">${tier.tier_level}</div>
+                            <div class="tier-price">$${Number(tier.monthly_cost).toFixed(2)}<span>/mo</span></div>
+                            <ul class="tier-features">
+                                <li>${tier.discount_pct}% off all purchases</li>
+                                <li>Earn ${tier.points_per_dollar}x reward points per dollar</li>
+                                <li>Priority seating access</li>
+                                <li>${isFeatured ? 'Free birthday popcorn' : 'Exclusive member previews'}</li>
+                            </ul>
+                            <button class="btn-subscribe ${isCurrent ? 'current' : ''}" 
+                                ${isCurrent ? 'disabled' : ''}
+                                onclick="${isCurrent ? '' : `openModal(${tier.membership_id}, '${tier.tier_level}', '${Number(tier.monthly_cost).toFixed(2)}')`}">
+                                ${isCurrent ? 'Current Plan' : 'Subscribe'}
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+                document.getElementById('tier-grid').innerHTML = '<p style="color:red;">Failed to load membership tiers.</p>';
+            }
+        }
+
+        function openModal(membershipId, tierName, price) {
+            const customerId = localStorage.getItem('customerId');
+            if (!customerId) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            selectedMembershipId = membershipId;
+            document.getElementById('modal-tier-name').textContent = tierName;
+            document.getElementById('modal-tier-price').textContent = '$' + price;
+            document.getElementById('modal-success').style.display = 'none';
+            document.getElementById('modal-actions').style.display = 'flex';
+            document.getElementById('upgrade-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('upgrade-modal').classList.remove('active');
+            selectedMembershipId = null;
+        }
+
+        async function confirmUpgrade() {
+            const customerId = localStorage.getItem('customerId');
+            const btn = document.getElementById('modal-confirm-btn');
+            btn.textContent = 'Upgrading...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/customers/${customerId}/upgrade`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ membership_id: selectedMembershipId })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('modal-actions').style.display = 'none';
+                    document.getElementById('modal-success').style.display = 'block';
+                    
+                    setTimeout(() => {
+                        closeModal();
+                        loadTiers(); // Refresh to show "Current Plan"
+                    }, 1500);
+                } else {
+                    alert('Upgrade failed: ' + data.error);
+                    btn.textContent = 'Confirm';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert('Server error. Please try again.');
+                btn.textContent = 'Confirm';
+                btn.disabled = false;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadTiers);
+    </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
+</body>
+</html>

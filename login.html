@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - The Gold Screen</title>
+    <link rel="stylesheet" href="istyle.css">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--cream);
+            color: var(--cream);
+            font-family: Georgia, serif;
+            padding-top: 84px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            background: var(--black);
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--gold);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-header h1 {
+            color: var(--gold);
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+
+        .auth-header p {
+            color: #aaa;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #f4d06f;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        .auth-switch a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        #error-msg {
+            color: #ff4444;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        #success-msg {
+            color: var(--gold, #d4af37);
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="auth-container" id="login-form">
+        <div class="auth-header">
+            <h1>Log In</h1>
+            <p>Enter your email to receive a magic link</p>
+        </div>
+        <div id="error-msg"></div>
+        <div id="success-msg"></div>
+        
+        <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="you@example.com">
+        </div>
+        
+        <button class="btn-submit" onclick="handleLogin()">Send Magic Link</button>
+        
+        <div class="auth-switch">
+            Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a>
+        </div>
+    </div>
+
+    <div class="auth-container" id="signup-form" style="display: none;">
+        <div class="auth-header">
+            <h1>Sign Up</h1>
+            <p>Create a new account</p>
+        </div>
+        <div id="signup-error-msg" style="color: #ff4444; margin-bottom: 15px; text-align: center; display: none;"></div>
+        
+        <div class="form-group">
+            <label for="signup-name">Full Name</label>
+            <input type="text" id="signup-name" class="form-control" placeholder="John Doe">
+        </div>
+
+        <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" class="form-control" placeholder="you@example.com">
+        </div>
+        
+        <button class="btn-submit" onclick="handleSignup()">Create Account</button>
+        
+        <div class="auth-switch">
+            Already have an account? <a href="#" onclick="toggleForm('login')">Log In</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleForm(type) {
+            if (type === 'signup') {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('signup-form').style.display = 'block';
+            } else {
+                document.getElementById('signup-form').style.display = 'none';
+                document.getElementById('login-form').style.display = 'block';
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const errorMsg = document.getElementById('error-msg');
+            const successMsg = document.getElementById('success-msg');
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            if (!email) {
+                errorMsg.textContent = 'Please enter your email.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    successMsg.textContent = data.message;
+                    successMsg.style.display = 'block';
+                    
+                    // Simulate clicking the magic link and logging in automatically
+                    localStorage.setItem('customerId', data.customer.customer_id);
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 1500);
+                } else {
+                    errorMsg.textContent = data.error;
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Server error. Please try again.';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        async function handleSignup() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const errorMsg = document.getElementById('signup-error-msg');
+            errorMsg.style.display = 'none';
+
+            if (!name || !email) {
+                errorMsg.textContent = 'Please fill out all fields.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('customerId', data.customer.customer_id);
+                    window.location.href = 'profile.html';
+                } else {
+                    errorMsg.textContent = data.error;
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Server error. Please try again.';
+                errorMsg.style.display = 'block';
+            }
+        }
+    </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
+</body>
+</html>

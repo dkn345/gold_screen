@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - The Gold Screen</title>
+    <link rel="stylesheet" href="istyle.css">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #0a0a0a;
+            color: var(--cream);
+            font-family: Georgia, serif;
+            padding-top: 84px;
+        }
+
+        .admin-wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .gate-container {
+            background: #111;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            margin: 100px auto;
+            border: 1px solid var(--gold);
+            text-align: center;
+        }
+
+        .gate-container h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .btn-submit {
+            padding: 14px 28px;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #f4d06f;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: none;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .dashboard-header h1 {
+            color: var(--gold);
+            margin: 0;
+        }
+
+        .db-name {
+            color: #569cd6;
+            font-family: monospace;
+            font-size: 0.9rem;
+            background: #1e1e1e;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+
+        .dashboard-body {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: #111;
+            border-radius: 12px;
+            border: 1px solid #222;
+            padding: 20px;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            color: var(--gold);
+            margin: 0 0 15px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .table-btn {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: #ccc;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            transition: all 0.15s;
+        }
+
+        .table-btn:hover {
+            background: #1a1a1a;
+            border-color: #333;
+            color: var(--gold);
+        }
+
+        .table-btn::before {
+            content: '📋 ';
+            font-size: 0.8rem;
+        }
+
+        .query-chip {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #bbb;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+
+        .query-chip:hover {
+            background: #222;
+            border-color: var(--gold);
+            color: #fff;
+        }
+
+        .query-chip .chip-label {
+            display: block;
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+        }
+
+        /* Main Panel */
+        .main-panel {
+            background: #111;
+            border-radius: 12px;
+            border: 1px solid #222;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .query-box {
+            width: 100%;
+            height: 120px;
+            background: #1e1e1e;
+            color: #569cd6;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1rem;
+            box-sizing: border-box;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+
+        .query-box:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .query-toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-run {
+            padding: 10px 24px;
+            background: var(--gold, #d4af37);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .btn-run:hover {
+            background: #b8860b;
+        }
+
+        .btn-clear {
+            padding: 10px 18px;
+            background: transparent;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-clear:hover {
+            color: #fff;
+            border-color: #888;
+        }
+
+        .shortcut-hint {
+            color: #555;
+            font-size: 0.8rem;
+            font-family: sans-serif;
+            margin-left: auto;
+        }
+
+        /* Results */
+        .results-area {
+            background: #0d0d0d;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #222;
+            overflow-x: auto;
+            flex-grow: 1;
+            min-height: 250px;
+        }
+
+        .results-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            font-family: sans-serif;
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px 14px;
+            border: 1px solid #2a2a2a;
+            text-align: left;
+        }
+
+        th {
+            background: #1a1a1a;
+            color: var(--gold);
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #1a1a1a;
+        }
+
+        tr:nth-child(even) {
+            background: #141414;
+        }
+
+        .error-text {
+            color: #ff4444;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .success-text {
+            color: var(--gold, #d4af37);
+        }
+
+        /* History */
+        .history-item {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: #888;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item:hover {
+            background: #1a1a1a;
+            border-color: #333;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="index.html">
+            <img src="assets/logo.png" alt="The Gold Screen Logo" width="80" height="auto">
+        </a>
+        <div class="nav-links">
+            <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
+            <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
+        </div>
+        <div class="nav-actions">
+            <a class="nav-action" href="cart.html">
+                <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
+            </a>
+            <a class="nav-action" href="profile.html">
+                <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-wrap">
+        <!-- Passcode Gate -->
+        <div class="gate-container" id="gate">
+            <h2>🔒 Admin Login</h2>
+            <div id="gate-error" style="color:#ff4444; margin-bottom:15px; display:none;">Invalid passcode</div>
+            <input type="password" id="passcode" class="form-control" placeholder="Enter admin passcode" onkeypress="if(event.key==='Enter') verifyPasscode()">
+            <button class="btn-submit" style="width:100%;" onclick="verifyPasscode()">Access Database</button>
+            <p style="color: #555; font-size: 0.8rem; margin-top: 20px;">(Hint: goldadmin)</p>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dashboard-container" id="dashboard">
+            <div class="dashboard-header">
+                <h1>⚙️ Database Console</h1>
+                <span class="db-name">gold_screen_db</span>
+            </div>
+
+            <div class="dashboard-body">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <div class="sidebar-section">
+                        <h3>📂 Tables</h3>
+                        <div id="table-list">
+                            <p style="color:#555; font-size:0.8rem;">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>⭐ Suggested Queries</h3>
+                        <button class="query-chip" onclick="loadSuggested(this)" data-query="SELECT m.title, COUNT(b.ticket_id) AS tickets_sold FROM Movies m JOIN Showtimes s ON m.movie_id = s.movie_id JOIN Books b ON s.showtime_id = b.showtime_id GROUP BY m.title ORDER BY tickets_sold DESC;">
+                            <span class="chip-label">Top Movies by Sales</span>
+                            Tickets sold per movie
+                        </button>
+                        <button class="query-chip" onclick="loadSuggested(this)" data-query="SELECT c.name, c.email, m.tier_level, c.reward_points FROM Customers c LEFT JOIN Memberships m ON c.membership_id = m.membership_id ORDER BY c.reward_points DESC;">
+                            <span class="chip-label">Customer Leaderboard</span>
+                            Customers ranked by points
+                        </button>
+                        <button class="query-chip" onclick="loadSuggested(this)" data-query="SELECT p.payment_id, p.total_amount, p.payment_method, COUNT(t.ticket_id) AS ticket_count FROM Payments p LEFT JOIN Tickets t ON p.payment_id = t.payment_id GROUP BY p.payment_id ORDER BY p.payment_id DESC LIMIT 10;">
+                            <span class="chip-label">Recent Transactions</span>
+                            Last 10 payments with ticket count
+                        </button>
+                        <button class="query-chip" onclick="loadSuggested(this)" data-query="SELECT c.name AS item, c.price, SUM(pf.quantity) AS total_sold, SUM(pf.quantity * c.price) AS revenue FROM Concessions c JOIN Pays_for pf ON c.item_id = pf.item_id GROUP BY c.item_id ORDER BY total_sold DESC;">
+                            <span class="chip-label">Concession Sales</span>
+                            Best-selling snacks by revenue
+                        </button>
+                        <button class="query-chip" onclick="loadSuggested(this)" data-query="SELECT a.room_number, a.max_capacity, COUNT(DISTINCT s.showtime_id) AS total_showtimes FROM Auditoriums a LEFT JOIN Showtimes s ON a.room_number = s.room_number GROUP BY a.room_number;">
+                            <span class="chip-label">Auditorium Usage</span>
+                            Room capacity & showtime count
+                        </button>
+                        <button class="query-chip" onclick="loadSuggested(this)" data-query="SELECT m.tier_level, m.monthly_cost, m.discount_pct, m.points_per_dollar, COUNT(c.customer_id) AS subscribers FROM Memberships m LEFT JOIN Customers c ON m.membership_id = c.membership_id GROUP BY m.membership_id;">
+                            <span class="chip-label">Membership Stats</span>
+                            Subscribers per tier
+                        </button>
+                        <button class="query-chip" onclick="loadSuggested(this)" data-query="SELECT c.name AS customer, c.email, p.payment_id, p.total_amount, p.payment_method, p.timestamp FROM Makes mk JOIN Customers c ON mk.customer_id = c.customer_id JOIN Payments p ON mk.payment_id = p.payment_id ORDER BY p.timestamp DESC;">
+                            <span class="chip-label">Payments by Member</span>
+                            All payments linked to customers
+                        </button>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>🕑 History</h3>
+                        <div id="history-list">
+                            <p style="color:#555; font-size:0.8rem;">No queries yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Panel -->
+                <div class="main-panel">
+                    <textarea id="sql-query" class="query-box" placeholder="SELECT * FROM Movies;"></textarea>
+                    <div class="query-toolbar">
+                        <button class="btn-run" onclick="runQuery()">▶ Run Query</button>
+                        <button class="btn-clear" onclick="document.getElementById('sql-query').value = ''">Clear</button>
+                        <span class="shortcut-hint">Ctrl+Enter to run</span>
+                    </div>
+
+                    <div class="results-area" id="results">
+                        <p style="color: #555; text-align: center; margin-top: 100px;">Run a query or click a suggestion to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let adminPasscode = '';
+        let queryHistory = [];
+
+        function verifyPasscode() {
+            const code = document.getElementById('passcode').value;
+            const err = document.getElementById('gate-error');
+            
+            if (code === 'goldadmin') {
+                adminPasscode = code;
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadTableList();
+            } else {
+                err.style.display = 'block';
+            }
+        }
+
+        async function loadTableList() {
+            try {
+                const response = await fetch('http://localhost:3000/api/admin/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ passcode: adminPasscode, query: 'SHOW TABLES' })
+                });
+                const data = await response.json();
+                if (data.results) {
+                    const list = document.getElementById('table-list');
+                    list.innerHTML = data.results.map(row => {
+                        const tableName = Object.values(row)[0];
+                        return `<button class="table-btn" onclick="quickSelect('${tableName}')">${tableName}</button>`;
+                    }).join('');
+                }
+            } catch(e) {
+                document.getElementById('table-list').innerHTML = '<p style="color:red;font-size:0.8rem;">Failed to load</p>';
+            }
+        }
+
+        function quickSelect(tableName) {
+            document.getElementById('sql-query').value = `SELECT * FROM ${tableName} LIMIT 50;`;
+            runQuery();
+        }
+
+        function loadSuggested(btn) {
+            const query = btn.getAttribute('data-query');
+            document.getElementById('sql-query').value = query;
+            runQuery();
+        }
+
+        function addToHistory(query) {
+            // Don't add duplicates
+            if (queryHistory.length > 0 && queryHistory[0] === query) return;
+            queryHistory.unshift(query);
+            if (queryHistory.length > 10) queryHistory.pop();
+            
+            const list = document.getElementById('history-list');
+            list.innerHTML = queryHistory.map(q => {
+                const short = q.length > 40 ? q.substring(0, 40) + '...' : q;
+                return `<button class="history-item" onclick="rerunHistory(this)" data-query="${q.replace(/"/g, '&quot;')}" title="${q.replace(/"/g, '&quot;')}">${short}</button>`;
+            }).join('');
+        }
+
+        function rerunHistory(btn) {
+            document.getElementById('sql-query').value = btn.getAttribute('data-query');
+            runQuery();
+        }
+
+        async function runQuery() {
+            const query = document.getElementById('sql-query').value;
+            const resultsDiv = document.getElementById('results');
+            
+            if (!query.trim()) {
+                resultsDiv.innerHTML = '<span class="error-text">Please enter a SQL query.</span>';
+                return;
+            }
+
+            const startTime = performance.now();
+            resultsDiv.innerHTML = '<p style="color: #888;">Executing query...</p>';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/admin/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ passcode: adminPasscode, query })
+                });
+                
+                const data = await response.json();
+                const elapsed = ((performance.now() - startTime) / 1000).toFixed(3);
+                
+                if (response.ok) {
+                    addToHistory(query);
+                    renderTable(data.results, elapsed);
+                } else {
+                    resultsDiv.innerHTML = `<span class="error-text">Error: ${data.error}</span>`;
+                }
+            } catch (err) {
+                resultsDiv.innerHTML = `<span class="error-text">Network Error: ${err.message}</span>`;
+            }
+        }
+
+        function renderTable(results, elapsed) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (!Array.isArray(results)) {
+                if (results.affectedRows !== undefined) {
+                    resultsDiv.innerHTML = `
+                        <div class="results-meta"><span>Action query</span><span>${elapsed}s</span></div>
+                        <p class="success-text">✓ Query successful. Affected rows: ${results.affectedRows}</p>`;
+                    return;
+                }
+                resultsDiv.innerHTML = `<pre style="color: #ddd;">${JSON.stringify(results, null, 2)}</pre>`;
+                return;
+            }
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="results-meta"><span>0 rows returned</span><span>${elapsed}s</span></div>
+                    <p style="color: #888; text-align: center; margin-top: 40px;">Query returned 0 rows.</p>`;
+                return;
+            }
+
+            const columns = Object.keys(results[0]);
+            
+            let html = `<div class="results-meta"><span>${results.length} row${results.length !== 1 ? 's' : ''} · ${columns.length} column${columns.length !== 1 ? 's' : ''}</span><span>${elapsed}s</span></div>`;
+            html += '<table><thead><tr>';
+            columns.forEach(col => {
+                html += `<th>${col}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            results.forEach(row => {
+                html += '<tr>';
+                columns.forEach(col => {
+                    const val = row[col];
+                    if (val === null) {
+                        html += '<td style="color:#666;font-style:italic;">NULL</td>';
+                    } else {
+                        html += `<td>${val}</td>`;
+                    }
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            resultsDiv.innerHTML = html;
+        }
+
+        // Ctrl+Enter keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                runQuery();
+            }
+        });
+    </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
+</body>
+</html>

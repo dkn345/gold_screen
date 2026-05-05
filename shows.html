@@ -17,12 +17,13 @@
             <!-- goes to start of movies area on main page -->
             <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
             <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
         </div>
         <div class="nav-actions">
-            <a class="nav-action" href="pages/cart.html">
+            <a class="nav-action" href="cart.html?v=5">
                 <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
             </a>
-            <a class="nav-action" href="pages/profile.html">
+            <a class="nav-action" href="profile.html">
                 <img src="assets/star-gold.svg" alt="Profile" width="52" height="52">
             </a>
         </div>
@@ -99,7 +100,14 @@
         }
 
         async function loadShows(selectedDate) {
-            const shows = await fetchShows();
+            const allShows = await fetchShows();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetMovieId = urlParams.get('movie_id');
+            
+            const shows = targetMovieId 
+                ? allShows.filter(s => String(s.movie_id) === String(targetMovieId))
+                : allShows;
 
             if (!shows.length) {
                 showsContainer.innerHTML = '<p class="shows-status">No shows available</p>';
@@ -126,7 +134,8 @@
                                 date: selectedDate,
                                 time: String(showtime.start_time),
                                 room: String(showtime.room_number),
-                                showtime_id: String(showtime.showtime_id)
+                                showtime_id: String(showtime.showtime_id),
+                                cb: Date.now().toString()
                             });
                             return `<button type="button" class="showtime" data-href="seat_selection.html?${params.toString()}">${formatShowtime(showtime.start_time)} | Room ${showtime.room_number}</button>`;
                         })
@@ -135,7 +144,7 @@
 
                 return `
                     <article class="show-card">
-                        <img src="assets/poster1.jpg" alt="${show.title} Poster" class="show-poster">
+                        <img src="assets/poster${show.movie_id}.jpg?v=1" alt="${show.title} Poster" class="show-poster">
                         <div class="schedule-panel">
                             <div class="movie-info">
                                 <h2 class="title">${show.title}</h2>
@@ -228,5 +237,6 @@
         // 2. Run it every time the user scrolls
         scroller.addEventListener('scroll', updateArrowVisibility);
     </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
 </body>
 </html>

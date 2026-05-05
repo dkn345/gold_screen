@@ -25,7 +25,7 @@
         margin: 0 auto;
         padding: 24px;
     }
-    .hero {
+    .seat-hero {
         background: var(--black);
         border-radius: 18px;
         padding: 28px;
@@ -33,7 +33,20 @@
         gap: 18px;
         box-shadow: 0 14px 30px rgba(0,0,0,.18);
     }
-    .hero h1 {
+    .seat-hero-top {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+    }
+    .seat-hero-poster {
+        width: 120px;
+        aspect-ratio: 2 / 3;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 10px 24px rgba(0,0,0,.28);
+        flex-shrink: 0;
+    }
+    .seat-hero h1 {
         margin: 0;
         color: var(--gold);
         font-size: clamp(2rem, 4vw, 3.4rem);
@@ -206,9 +219,10 @@
         <div class="nav-links">
             <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
             <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
         </div>
         <div class="nav-actions">
-            <a class="nav-action" href="cart.html">
+            <a class="nav-action" href="cart.html?v=5">
                 <img src="assets/cart-gold.svg" alt="Cart" width="44" height="44">
             </a>
             <a class="nav-action" href="profile.html">
@@ -218,9 +232,14 @@
     </div>
 
     <div class="wrap">
-        <div class="hero">
-            <h1 id="movieTitle">Seat Selection</h1>
-            <div class="meta" id="showMeta"></div>
+        <div class="seat-hero">
+            <div class="seat-hero-top">
+                <img id="moviePoster" class="seat-hero-poster" src="assets/poster1.jpg" alt="Movie poster">
+                <div>
+                    <h1 id="movieTitle">Seat Selection</h1>
+                    <div class="meta" id="showMeta"></div>
+                </div>
+            </div>
         </div>
 
         <div class="grid">
@@ -269,6 +288,8 @@
     const showtimeId = params.get('showtime_id') || '';
 
     document.getElementById('movieTitle').textContent = movieTitle;
+    document.getElementById('moviePoster').src = `assets/poster${movieId || '1'}.jpg?v=1`;
+    document.getElementById('moviePoster').alt = `${movieTitle} Poster`;
     document.getElementById('showMeta').innerHTML = `
         <span>Date: ${date}</span>
         <span>Time: ${time}</span>
@@ -333,11 +354,25 @@
         return new Set(seatIds);
     }
 
+    async function loadOccupiedSeats() {
+        try {
+            const response = await fetch(`http://localhost:3000/api/occupied-seats/${showtimeId}`);
+            if (!response.ok) return [];
+            return await response.json();
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    }
+
+    let realOccupiedSeats = [];
+
     function renderSeats() {
         const seats = [];
         const rowLabels = getRowLabels(Math.ceil(roomCapacity / seatsPerRow));
         const allSeats = getAllSeatIds(roomCapacity);
-        takenSeats = buildTakenSeats(allSeats);
+        const pseudoTaken = buildTakenSeats(allSeats);
+        takenSeats = new Set([...pseudoTaken, ...realOccupiedSeats]);
         
         // 1. Move accessible seats to the front row (Index 0 / Row A)
         const accessibleRow = rowLabels[0]; 
@@ -442,14 +477,16 @@
             ticketCount: selectedSeats.size
         };
         localStorage.setItem('pendingBooking', JSON.stringify(payload));
-        window.location.href = 'cart.html';
+        window.location.href = 'concessions.html?v=1';
     });
 
     (async () => {
         await loadAuditoriumCapacity();
+        realOccupiedSeats = await loadOccupiedSeats();
         renderSeats();
         updateSummary();
     })();
 </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
 </body>
 </html>

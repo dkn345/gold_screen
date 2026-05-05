@@ -40,17 +40,44 @@
             color: #d4af37;
         }
         .checkout-btn {
-            float: right;
-            padding: 12px 30px;
-            background-color: #d4af37;
-            color: #000;
-            border: none;
-            font-size: 16px;
+            padding: 10px 20px;
+            color: var(--gold, #d4af37);
+            border: var(--gold, #d4af37) 2px solid;
+            background: transparent;
+            font-family: 'TitleFont', Georgia, serif;
+            font-size: 1.2rem;
             cursor: pointer;
-            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .checkout-btn:hover {
-            background-color: #f0d566;
+            background-color: var(--gold, #d4af37);
+            color: black;
+        }
+        .remove-btn {
+            color: var(--red, #A3061C);
+            background: transparent;
+            border: 1px solid var(--red, #A3061C);
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: background 0.2s, color 0.2s;
+        }
+        .remove-btn:hover {
+            background: var(--red, #A3061C);
+            color: white;
+        }
+        .discount-row {
+            color: var(--gold, #d4af37);
+            font-weight: bold;
+        }
+        #cart-total-container {
+            margin-top: 10px;
+            font-size: 1.5rem;
+            color: var(--gold);
         }
     </style>
 </head>
@@ -62,6 +89,7 @@
         <div class="nav-links">
             <a class="nav-link" href="index.html#movies-scroll-target">MOVIES</a>
             <a class="nav-link" href="shows.html">SHOWS</a>
+            <a class="nav-link" href="memberships.html">MEMBERSHIPS</a>
         </div>
         <div class="nav-actions">
             <a class="nav-action" href="cart.html">
@@ -79,10 +107,27 @@
         <div id="cart-items-container">
             <div class="empty-cart">Your cart is empty</div>
         </div>
-        <div class="cart-total">
-            Total: $<span id="cart-total">0.00</span>
+        <div class="cart-total" style="text-align: right; border-top: 2px solid #d4af37; padding-top: 20px; margin-top: 20px;">
+            <div id="subtotal-row" style="font-size: 1.1rem; margin-bottom: 12px; color: #888;">
+                Subtotal: <span id="cart-subtotal-label">$<span id="cart-subtotal">0.00</span></span>
+            </div>
+            <div id="discount-row" style="display: none; margin-bottom: 12px; background: linear-gradient(135deg, #8B6914, #b8860b); color: #fff; padding: 12px 18px; border-radius: 8px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>🎟️ <strong>Member Discount (<span id="discount-pct">0</span>%)</strong></span>
+                    <span style="font-size: 1.2rem; font-weight: bold;">-$<span id="discount-amount">0.00</span></span>
+                </div>
+                <div style="font-size: 0.8rem; margin-top: 4px; opacity: 0.8;">Applied automatically from your membership</div>
+            </div>
+            <div id="total-row" style="font-size: 1.6rem; color: #d4af37; font-weight: bold; margin-top: 8px;">
+                You Pay: $<span id="cart-total">0.00</span>
+            </div>
+            <div id="savings-row" style="display: none; font-size: 0.9rem; color: #d4af37; margin-top: 6px; font-weight: bold;">
+                You're saving $<span id="savings-amount">0.00</span> with your membership! 🎉
+            </div>
         </div>
-        <button class="checkout-btn">Checkout</button>
+        <div style="text-align: right; margin-top: 20px;">
+            <button class="checkout-btn" id="main-checkout-btn">Proceed to Checkout</button>
+        </div>
     </div>
 
     <script src="api.js"></script>
@@ -132,12 +177,15 @@
         }
 
         // Display cart items
-        function displayCart() {
+        async function displayCart() {
             const cart = getCartFromStorage();
             const container = document.getElementById('cart-items-container');
             
             if (cart.length === 0) {
                 container.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+                if (document.getElementById('cart-subtotal')) document.getElementById('cart-subtotal').textContent = '0.00';
+                document.getElementById('cart-total').textContent = '0.00';
+                if (document.getElementById('discount-row')) document.getElementById('discount-row').style.display = 'none';
                 return;
             }
             
@@ -156,14 +204,53 @@
                         </div>
                         <div>
                             <p class="item-price">$${itemTotal}</p>
-                            <button onclick="removeFromCart(${index})" style="color: red; cursor: pointer;">Remove</button>
+                            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
                         </div>
                     </div>
                 `;
             });
             
             container.innerHTML = html;
-            document.getElementById('cart-total').textContent = total.toFixed(2);
+            
+            if (document.getElementById('cart-subtotal')) {
+                document.getElementById('cart-subtotal').textContent = total.toFixed(2);
+            }
+
+            let finalTotal = total;
+            const customerId = localStorage.getItem('customerId');
+            
+            if (customerId) {
+                const customerArray = await fetchCustomer(customerId);
+                const customer = Array.isArray(customerArray) ? customerArray[0] : customerArray;
+                
+                if (customer && customer.discount_pct) {
+                    const discountAmount = total * (customer.discount_pct / 100);
+                    finalTotal = total - discountAmount;
+                    
+                    // Show discount banner
+                    document.getElementById('discount-pct').textContent = customer.discount_pct;
+                    document.getElementById('discount-amount').textContent = discountAmount.toFixed(2);
+                    document.getElementById('discount-row').style.display = 'block';
+                    
+                    // Strikethrough on subtotal
+                    document.getElementById('cart-subtotal-label').style.textDecoration = 'line-through';
+                    document.getElementById('cart-subtotal-label').style.color = '#999';
+                    
+                    // Show savings celebration
+                    document.getElementById('savings-amount').textContent = discountAmount.toFixed(2);
+                    document.getElementById('savings-row').style.display = 'block';
+                } else {
+                    document.getElementById('discount-row').style.display = 'none';
+                    document.getElementById('savings-row').style.display = 'none';
+                    document.getElementById('cart-subtotal-label').style.textDecoration = 'none';
+                }
+            } else {
+                document.getElementById('discount-row').style.display = 'none';
+                document.getElementById('savings-row').style.display = 'none';
+                if (document.getElementById('cart-subtotal-label')) document.getElementById('cart-subtotal-label').style.textDecoration = 'none';
+            }
+            
+            document.getElementById('cart-total').textContent = finalTotal.toFixed(2);
         }
         
         function removeFromCart(index) {
@@ -176,7 +263,18 @@
         window.addEventListener('DOMContentLoaded', () => {
             renderPendingBooking();
             displayCart();
+            
+            document.getElementById('main-checkout-btn').addEventListener('click', () => {
+                const cart = getCartFromStorage();
+                if (cart.length === 0) {
+                    alert('Your cart is empty!');
+                    return;
+                }
+                
+                window.location.href = 'checkout.html';
+            });
         });
     </script>
+    <a href="admin.html" class="admin-lock" title="Admin">🔒</a>
 </body>
 </html>
