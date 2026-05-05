@@ -202,7 +202,7 @@ h2{
     color: var(--cream);
     font-size: clamp(2.2rem, 3.2vw, 3rem);
     line-height: 1;
-    font-family: 'GoldScreenFont';
+    font-family: 'TitleFont';
     letter-spacing: 0.03em;
 }
 
@@ -222,10 +222,11 @@ h2{
     display: flex;
     align-items: baseline;
     gap: 12px;
+    margin-bottom: 10px;
 }
 
 .movie-genre {
-    background: var(--cream);
+    background: var(--gold);
     color: var(--black);
     padding: 4px 12px;
     border-radius: 20px;
@@ -237,6 +238,7 @@ h2{
     align-items: center;
     letter-spacing: 0.05em;
     padding: 6px 10px;
+    font-weight: bold;
 }
 
 .details {
@@ -257,25 +259,37 @@ h2{
 
 .showtimes {
     display: grid;
-    grid-template-columns: repeat(3, minmax(90px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(5, minmax(90px, 130px));
+    gap: 15px;
     align-content: center;
 }
 
 .showtime {
-    border: 1px solid var(--gold);
-    background: transparent;
-    color: var(--gold);
+    background: var(--cream);
+    color: var(--black);
     padding: 10px 12px;
-    border-radius: 8px;
+    border: none;
+    border-radius: 10px;
     font-family: 'TitleFont';
     text-transform: uppercase;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+.showtime-time {
+    font-size: 1.3em;
+}
+
+.showtime-room {
+    font-size: 0.1em;
 }
 
 .showtime:hover {
-    background: var(--gold);
-    color: var(--black);
+    transform: rotate(-2deg) scale(1.05);
 }
 
 @media (max-width: 900px) {

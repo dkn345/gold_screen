@@ -145,7 +145,7 @@
                                 showtime_id: String(showtime.showtime_id),
                                 cb: Date.now().toString()
                             });
-                            return `<button type="button" class="showtime" data-href="seat_selection.html?${params.toString()}">${formatShowtime(showtime.start_time)} | Room ${showtime.room_number}</button>`;
+                            return `<button type="button" class="showtime" data-href="seat_selection.html?${params.toString()}"><span class="showtime-time">${formatShowtime(showtime.start_time)}</span><span class="showtime-room">Room ${showtime.room_number}</span></button>`;
                         })
                         .join('');
                 })();
