@@ -33,6 +33,7 @@ h1 {
     font-family: 'GoldScreenFont';
     font-size: 80px;
     margin: 0;
+    letter-spacing: 0.03em;
 }
 
 h2{
@@ -118,6 +119,7 @@ h2{
     border: none;
     font-size: 50px;
     font-family: 'GoldScreenFont';
+    letter-spacing: 0.03em;
 }
 
 /* arrow hovering */
@@ -150,6 +152,7 @@ h2{
 #shows-container {
     display: grid;
     gap: 24px;
+    margin-top: 24px;
     padding-bottom: 30px;
 }
 
@@ -196,9 +199,51 @@ h2{
     margin: 0;
     width: auto;
     text-align: left;
-    color: var(--gold);
-    font-size: clamp(1.8rem, 2.8vw, 2.5rem);
+    color: var(--cream);
+    font-size: clamp(2.2rem, 3.2vw, 3rem);
     line-height: 1;
+    font-family: 'GoldScreenFont';
+    letter-spacing: 0.03em;
+}
+
+.movie-info .movie-meta {
+    margin:5px;
+    width: auto;
+    text-align: left;
+    color: var(--cream);
+    font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+    font-family: 'TitleFont';
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    align-self: start;
+}
+
+.movie-meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.movie-genre {
+    background: var(--cream);
+    color: var(--black);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'TitleFont';
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+    text-transform: lowercase;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.05em;
+    padding: 6px 10px;
+}
+
+.details {
+    margin: 0;
+    font-family: 'TitleFont';
+    font-size: 1rem;
+    color: var(--cream);
 }
 
 .genre-line {

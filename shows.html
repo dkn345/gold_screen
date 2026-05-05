@@ -101,6 +101,12 @@
             return `${displayHour}:${minuteText || '00'} ${suffix}`;
         }
 
+        function formatRuntime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${hours}h ${mins}m`;
+        }
+
         async function loadShows(selectedDate) {
             const allShows = await fetchShows();
             
@@ -150,7 +156,10 @@
                         <div class="schedule-panel">
                             <div class="movie-info">
                                 <h2 class="title">${show.title}</h2>
-                                <p class="genre-line">Genre: ${show.genre || 'Unknown'}</p>
+                                <div class="movie-meta-row">
+                                    <p class="movie-meta">${show.age_rating} | ${formatRuntime(show.runtime)}</p>
+                                    <span class="movie-genre">${show.genre.toLowerCase()}</span>
+                                </div>                        
                             </div>
                             <div class="showtimes">
                                 ${showtimesHTML}
