@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Gold lock icon</title>
+  <desc id="desc">A stylized gold lock with a rounded shackle and transparent keyhole.</desc>
+
+  <path d="M40 56V42c0-13.2 10.8-24 24-24s24 10.8 24 24v14"
+        fill="none"
+        stroke="#E19B01"
+        stroke-width="12"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <path fill="#E19B01" fill-rule="evenodd" d="M28 56h72c4.4 0 8 3.6 8 8v40c0 4.4-3.6 8-8 8H28c-4.4 0-8-3.6-8-8V64c0-4.4 3.6-8 8-8z M64 74c4.4 0 8 3.6 8 8 0 3.2-1.9 5.9-4.6 7.1V98h-6.8v-8.9C58.9 87.9 56 84.5 56 82c0-4.4 3.6-8 8-8z"/>
+</svg>
