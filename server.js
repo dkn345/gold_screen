@@ -285,6 +285,12 @@ app.post('/api/checkout', async (req, res) => {
           'INSERT INTO Pays_for (payment_id, item_id, quantity) VALUES (?, ?, ?)',
           [paymentId, item.id, item.quantity]
         );
+        
+        // Deduct from stock level
+        await connection.query(
+          'UPDATE Concessions SET stock_level = GREATEST(0, stock_level - ?) WHERE item_id = ?',
+          [item.quantity, item.id]
+        );
       }
     }
     
