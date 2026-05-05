@@ -185,22 +185,49 @@ app.post('/api/checkout', async (req, res) => {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
-    const { cart, customerId } = req.body;
+    const { cart, customerId, redeemedTickets = 0, redeemedConcessions = 0 } = req.body;
     
-    let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let baseSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    let ticketPrices = [];
+    let concessionPrices = [];
+    cart.forEach(item => {
+        const isTicket = item.seats && item.seats.length > 0;
+        for(let i=0; i<item.quantity; i++) {
+            if (isTicket) ticketPrices.push(item.price);
+            else concessionPrices.push(item.price);
+        }
+    });
+    ticketPrices.sort((a,b) => b-a);
+    concessionPrices.sort((a,b) => b-a);
+    
+    let discountFromPoints = 0;
+    for(let i=0; i<redeemedTickets; i++) {
+        if(i < ticketPrices.length) discountFromPoints += ticketPrices[i];
+    }
+    for(let i=0; i<redeemedConcessions; i++) {
+        if(i < concessionPrices.length) discountFromPoints += concessionPrices[i];
+    }
+    
+    let totalAmount = Math.max(0, baseSubtotal - discountFromPoints);
+    let pointsToDeduct = (redeemedTickets * 100) + (redeemedConcessions * 50);
     
     let discountPct = 0;
     let pointsPerDollar = 1; // default for non-members
     
     if (customerId) {
       const [customers] = await connection.query(`
-        SELECT m.discount_pct, m.points_per_dollar 
+        SELECT c.reward_points, m.discount_pct, m.points_per_dollar 
         FROM Customers c 
         LEFT JOIN Memberships m ON c.membership_id = m.membership_id 
         WHERE c.customer_id = ?
       `, [customerId]);
       
       if (customers.length > 0) {
+        if (customers[0].reward_points < pointsToDeduct) {
+             throw new Error('Not enough reward points');
+        }
+        
         if (customers[0].discount_pct) {
           discountPct = customers[0].discount_pct;
           totalAmount = totalAmount * (1 - (discountPct / 100));
@@ -208,7 +235,11 @@ app.post('/api/checkout', async (req, res) => {
         if (customers[0].points_per_dollar) {
           pointsPerDollar = customers[0].points_per_dollar;
         }
+      } else if (pointsToDeduct > 0) {
+          throw new Error('Customer not found for point redemption');
       }
+    } else if (pointsToDeduct > 0) {
+        throw new Error('Must be logged in to redeem points');
     }
     
     const [payRows] = await connection.query('SELECT IFNULL(MAX(payment_id), 0) + 1 as nextId FROM Payments');
@@ -261,8 +292,8 @@ app.post('/api/checkout', async (req, res) => {
     if (customerId) {
       const pointsEarned = Math.floor(totalAmount * pointsPerDollar);
       await connection.query(
-        'UPDATE Customers SET reward_points = reward_points + ? WHERE customer_id = ?',
-        [pointsEarned, customerId]
+        'UPDATE Customers SET reward_points = reward_points + ? - ? WHERE customer_id = ?',
+        [pointsEarned, pointsToDeduct, customerId]
       );
       
       // Link payment to customer in Makes table

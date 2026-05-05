@@ -97,6 +97,21 @@
             font-weight: bold;
             display: none;
         }
+
+        .redeem-btn {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .redeem-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -125,11 +140,38 @@
         
         <div class="order-summary">
             <h3 style="margin-top:0; color:#ddd;">Order Summary</h3>
+            
+            <div id="rewards-section" style="display:none; margin-bottom: 15px; padding: 15px; background: #222; border-radius: 8px; border: 1px solid var(--gold);">
+                <div style="font-weight: bold; color: var(--gold); margin-bottom: 15px; font-size: 1.1rem;">🌟 Reward Points: <span id="available-points">0</span></div>
+                
+                <div id="redeem-ticket-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span>Free Ticket (100 pts)</span>
+                    <div>
+                        <button type="button" class="redeem-btn" id="btn-minus-ticket" onclick="updateRedeem('ticket', -1)">-</button>
+                        <span id="redeem-ticket-count" style="margin: 0 10px; display: inline-block; width: 12px; text-align: center;">0</span>
+                        <button type="button" class="redeem-btn" id="btn-plus-ticket" onclick="updateRedeem('ticket', 1)">+</button>
+                    </div>
+                </div>
+                
+                <div id="redeem-concession-row" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Free Concession (50 pts)</span>
+                    <div>
+                        <button type="button" class="redeem-btn" id="btn-minus-concession" onclick="updateRedeem('concession', -1)">-</button>
+                        <span id="redeem-concession-count" style="margin: 0 10px; display: inline-block; width: 12px; text-align: center;">0</span>
+                        <button type="button" class="redeem-btn" id="btn-plus-concession" onclick="updateRedeem('concession', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+            
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <span>Subtotal:</span>
                 <span>$<span id="checkout-subtotal">0.00</span></span>
             </div>
-            <div id="checkout-discount-row" style="display:flex; justify-content:space-between; margin-bottom:10px;" class="discount-text">
+            <div id="checkout-points-discount-row" style="display:none; justify-content:space-between; margin-bottom:10px;" class="discount-text">
+                <span>Points Discount:</span>
+                <span>-$<span id="checkout-points-amount">0.00</span></span>
+            </div>
+            <div id="checkout-discount-row" style="display:none; justify-content:space-between; margin-bottom:10px;" class="discount-text">
                 <span>Discount (<span id="checkout-discount-pct">0</span>%):</span>
                 <span>-$<span id="checkout-discount-amount">0.00</span></span>
             </div>
@@ -169,6 +211,78 @@
 
     <script src="api.js"></script>
     <script>
+        let userPoints = 0;
+        let redeemedTickets = 0;
+        let redeemedConcessions = 0;
+        let availableTickets = 0;
+        let availableConcessions = 0;
+        let ticketPrices = [];
+        let concessionPrices = [];
+        let membershipDiscountPct = 0;
+        let baseSubtotal = 0;
+
+        function updateRedeem(type, delta) {
+            if (type === 'ticket') {
+                const newCount = redeemedTickets + delta;
+                if (newCount >= 0 && newCount <= availableTickets && (userPoints - (newCount * 100) - (redeemedConcessions * 50) >= 0)) {
+                    redeemedTickets = newCount;
+                }
+            } else if (type === 'concession') {
+                const newCount = redeemedConcessions + delta;
+                if (newCount >= 0 && newCount <= availableConcessions && (userPoints - (redeemedTickets * 100) - (newCount * 50) >= 0)) {
+                    redeemedConcessions = newCount;
+                }
+            }
+            
+            document.getElementById('redeem-ticket-count').textContent = redeemedTickets;
+            document.getElementById('redeem-concession-count').textContent = redeemedConcessions;
+            
+            updateTotals();
+        }
+
+        function updateTotals() {
+            let discountFromPoints = 0;
+            
+            for(let i=0; i<redeemedTickets; i++) {
+                discountFromPoints += ticketPrices[i];
+            }
+            for(let i=0; i<redeemedConcessions; i++) {
+                discountFromPoints += concessionPrices[i];
+            }
+            
+            const remainingSubtotal = Math.max(0, baseSubtotal - discountFromPoints);
+            let finalTotal = remainingSubtotal;
+            
+            if (membershipDiscountPct > 0) {
+                const discountAmount = remainingSubtotal * (membershipDiscountPct / 100);
+                finalTotal = remainingSubtotal - discountAmount;
+                
+                document.getElementById('checkout-discount-pct').textContent = membershipDiscountPct;
+                document.getElementById('checkout-discount-amount').textContent = discountAmount.toFixed(2);
+                document.getElementById('checkout-discount-row').style.display = 'flex';
+            } else {
+                document.getElementById('checkout-discount-row').style.display = 'none';
+            }
+            
+            const pointsRow = document.getElementById('checkout-points-discount-row');
+            if (discountFromPoints > 0) {
+                pointsRow.style.display = 'flex';
+                document.getElementById('checkout-points-amount').textContent = discountFromPoints.toFixed(2);
+            } else {
+                pointsRow.style.display = 'none';
+            }
+            
+            document.getElementById('checkout-total').textContent = finalTotal.toFixed(2);
+            document.getElementById('btn-total').textContent = finalTotal.toFixed(2);
+            
+            // Update button states
+            document.getElementById('btn-minus-ticket').disabled = redeemedTickets <= 0;
+            document.getElementById('btn-plus-ticket').disabled = redeemedTickets >= availableTickets || (userPoints - (redeemedTickets * 100 + 100) - (redeemedConcessions * 50) < 0);
+            
+            document.getElementById('btn-minus-concession').disabled = redeemedConcessions <= 0;
+            document.getElementById('btn-plus-concession').disabled = redeemedConcessions >= availableConcessions || (userPoints - (redeemedTickets * 100) - (redeemedConcessions * 50 + 50) < 0);
+        }
+
         async function loadCheckoutSummary() {
             const cart = getCartFromStorage();
             if (cart.length === 0) {
@@ -176,36 +290,47 @@
                 return;
             }
 
-            let subtotal = 0;
-            cart.forEach(item => {
-                subtotal += (item.price * item.quantity);
-            });
-
-            document.getElementById('checkout-subtotal').textContent = subtotal.toFixed(2);
-
-            let finalTotal = subtotal;
-            const customerId = localStorage.getItem('customerId');
+            baseSubtotal = 0;
+            ticketPrices = [];
+            concessionPrices = [];
             
+            cart.forEach(item => {
+                const isTicket = item.seats && item.seats.length > 0;
+                for(let i=0; i<item.quantity; i++) {
+                    if (isTicket) ticketPrices.push(item.price);
+                    else concessionPrices.push(item.price);
+                }
+                baseSubtotal += (item.price * item.quantity);
+            });
+            
+            ticketPrices.sort((a,b) => b-a);
+            concessionPrices.sort((a,b) => b-a);
+            availableTickets = ticketPrices.length;
+            availableConcessions = concessionPrices.length;
+
+            document.getElementById('checkout-subtotal').textContent = baseSubtotal.toFixed(2);
+
+            const customerId = localStorage.getItem('customerId');
             if (customerId) {
                 try {
                     const customerArray = await fetchCustomer(customerId);
                     const customer = Array.isArray(customerArray) ? customerArray[0] : customerArray;
                     
-                    if (customer && customer.discount_pct) {
-                        const discountAmount = subtotal * (customer.discount_pct / 100);
-                        finalTotal = subtotal - discountAmount;
+                    if (customer) {
+                        userPoints = customer.reward_points || 0;
+                        document.getElementById('available-points').textContent = userPoints;
+                        document.getElementById('rewards-section').style.display = 'block';
                         
-                        document.getElementById('checkout-discount-pct').textContent = customer.discount_pct;
-                        document.getElementById('checkout-discount-amount').textContent = discountAmount.toFixed(2);
-                        document.getElementById('checkout-discount-row').style.display = 'flex';
+                        if (customer.discount_pct) {
+                            membershipDiscountPct = customer.discount_pct;
+                        }
                     }
                 } catch (err) {
                     console.error("Error fetching discount", err);
                 }
             }
             
-            document.getElementById('checkout-total').textContent = finalTotal.toFixed(2);
-            document.getElementById('btn-total').textContent = finalTotal.toFixed(2);
+            updateTotals();
         }
 
         document.getElementById('payment-form').addEventListener('submit', async (e) => {
@@ -223,7 +348,12 @@
                 const response = await fetch('http://localhost:3000/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cart, customerId })
+                    body: JSON.stringify({ 
+                        cart, 
+                        customerId,
+                        redeemedTickets,
+                        redeemedConcessions
+                    })
                 });
                 
                 if (!response.ok) {
@@ -233,12 +363,21 @@
                 
                 // Save order summary for success page
                 const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                const discountPct = document.getElementById('checkout-discount-pct').textContent;
+                const discountPctEl = document.getElementById('checkout-discount-pct');
+                const discountAmtEl = document.getElementById('checkout-discount-amount');
+                const pointsAmtEl = document.getElementById('checkout-points-amount');
+                
+                const discountPct = discountPctEl ? discountPctEl.textContent : '0';
+                const discountAmt = discountAmtEl ? discountAmtEl.textContent : '0.00';
+                const pointsAmount = pointsAmtEl ? pointsAmtEl.textContent : '0.00';
                 const finalTotal = document.getElementById('checkout-total').textContent;
+                
                 localStorage.setItem('lastOrder', JSON.stringify({
                     items: cart,
                     subtotal: subtotal.toFixed(2),
                     discountPct: discountPct !== '0' ? discountPct : null,
+                    memberDiscountAmt: discountAmt !== '0.00' ? discountAmt : null,
+                    pointsDiscount: pointsAmount !== '0.00' ? pointsAmount : null,
                     total: finalTotal
                 }));
                 

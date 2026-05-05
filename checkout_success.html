@@ -110,8 +110,15 @@
                 <span>$${order.subtotal}</span>
             </div>`;
 
+            if (order.pointsDiscount) {
+                html += `<div style="display:flex; justify-content:space-between; padding:8px 0; color:#d4af37;">
+                    <span>🌟 Points Discount</span>
+                    <span>-$${order.pointsDiscount}</span>
+                </div>`;
+            }
+
             if (order.discountPct) {
-                const discountAmt = (parseFloat(order.subtotal) - parseFloat(order.total)).toFixed(2);
+                const discountAmt = order.memberDiscountAmt || (parseFloat(order.subtotal) - parseFloat(order.total) - (order.pointsDiscount ? parseFloat(order.pointsDiscount) : 0)).toFixed(2);
                 html += `<div style="display:flex; justify-content:space-between; padding:8px 0; color:#d4af37;">
                     <span>🎟️ Member Discount (${order.discountPct}%)</span>
                     <span>-$${discountAmt}</span>
