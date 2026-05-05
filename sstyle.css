@@ -280,14 +280,6 @@ h2{
     transition: transform 0.3s;
 }
 
-.showtime-time {
-    font-size: 1.3em;
-}
-
-.showtime-room {
-    font-size: 0.1em;
-}
-
 .showtime:hover {
     transform: rotate(-2deg) scale(1.05);
 }
