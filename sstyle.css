@@ -200,9 +200,9 @@ h2{
     width: auto;
     text-align: left;
     color: var(--cream);
-    font-size: clamp(2.2rem, 3.2vw, 3rem);
+    font-size: clamp(2.2rem, 3.5vw, 5rem);
     line-height: 1;
-    font-family: 'TitleFont';
+    font-family: 'GoldScreenFont';
     letter-spacing: 0.03em;
 }
 
