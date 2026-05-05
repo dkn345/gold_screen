@@ -18,27 +18,37 @@
         min-height: 100vh;
         background: var(--cream);
         color: var(--cream);
-        font-family: Georgia, serif;
         padding-top: 84px;
+        font-family: 'TitleFont';
     }
+
+    /* holds like EVERYTHING */
     .wrap {
         max-width: 1200px;
         margin: 0 auto;
         padding: 24px;
     }
+
+    /* top box */
     .seat-hero {
-        background: var(--black);
         border-radius: 18px;
         padding: 28px;
-        display: grid;
+        display: flex;
+        flex-direction: column;
+        align-content: center;
         gap: 18px;
-        box-shadow: 0 14px 30px rgba(0,0,0,.18);
+        box-shadow: none;
     }
+
+    /* box inside top box actually holding everything */
     .seat-hero-top {
         display: flex;
         gap: 18px;
-        align-items: flex-start;
+        align-items: flex-end;
+        width: 100%;
     }
+
+    /* movie poster */
     .seat-hero-poster {
         width: 120px;
         aspect-ratio: 2 / 3;
@@ -47,41 +57,64 @@
         box-shadow: 0 10px 24px rgba(0,0,0,.28);
         flex-shrink: 0;
     }
+
+    /* movie title */
     .seat-hero h1 {
         margin: 0;
         color: var(--gold);
         font-size: clamp(2rem, 4vw, 3.4rem);
         line-height: 1;
+        font-family: 'GoldScreenFont';
+        letter-spacing: 0.03em;
+        margin-bottom: 15px;
     }
+
+    /* movie details */
     .meta {
         display: flex;
         flex-wrap: wrap;
         gap: 12px 18px;
-        color: var(--cream);
+        color: var(--gold);
+        font-family: 'TitleFont';
+        font-size: clamp(1rem, 1.6vw, 1.5rem);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: .04em;
         position: relative;
         z-index: 2;
     }
+
+    /* hold screen and ticket boxes*/
     .grid {
         margin-top: 24px;
         display: grid;
         grid-template-columns: 1.4fr .8fr;
         gap: 24px;
     }
+
+    /* the screen and ticket boxes */
     .panel {
         background: var(--black);
         border-radius: 18px;
         padding: 24px;
         box-shadow: 0 14px 30px rgba(0,0,0,.12);
     }
+    
+    /* the screen item inside seat box */
     .screen {
-        height: 18px;
-        border-radius: 999px;
-        background: linear-gradient(90deg, #bbb, #eee, #bbb);
+        border-radius: 100px;
+        background-color: var(--cream);
         margin-bottom: 24px;
+        text-align: center;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: bold;
+        color: var(--black);
+        padding: 5px 0;
     }
+    
+    /* the grid holding the seats */
     .seats {
         display: grid;
         grid-template-columns: repeat(10, minmax(0, 1fr));
@@ -246,7 +279,7 @@
 
         <div class="grid">
             <div class="panel">
-                <div class="screen"></div>
+                <div class="screen"> SCREEN </div>
                 <div class="legend">
                     <span class="legend-item"><span class="legend-swatch vip"></span>VIP row</span>
                     <span class="legend-item"><span class="legend-swatch accessible"></span>Accessible seats</span>
@@ -289,14 +322,38 @@
     const movieId = params.get('movie_id') || '';
     const showtimeId = params.get('showtime_id') || '';
 
+    function formatDisplayDate(dateString) {
+        if (!dateString) return '';
+        const parsedDate = new Date(`${dateString}T00:00:00`);
+        if (Number.isNaN(parsedDate.getTime())) return dateString;
+        return parsedDate.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    function formatDisplayTime(timeString) {
+        if (!timeString) return '';
+        const [hoursText, minutesText = '00'] = String(timeString).split(':');
+        const hours = Number(hoursText);
+        if (Number.isNaN(hours)) return timeString;
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+        const displayHour = ((hours + 11) % 12) + 1;
+        return `${displayHour}:${minutesText.padStart(2, '0')} ${suffix}`;
+    }
+
+    function renderShowMeta() {
+        document.getElementById('showMeta').innerHTML = `
+            <span>${formatDisplayDate(date)} | ${formatDisplayTime(time)}</span>
+        `;
+    }
+
     document.getElementById('movieTitle').textContent = movieTitle;
     document.getElementById('moviePoster').src = `assets/poster${movieId || '1'}.jpg?v=1`;
     document.getElementById('moviePoster').alt = `${movieTitle} Poster`;
-    document.getElementById('showMeta').innerHTML = `
-        <span>Date: ${date}</span>
-        <span>Time: ${time}</span>
-        <span>Room: ${room}</span>
-    `;
+    renderShowMeta();
 
     const seatGrid = document.getElementById('seatGrid');
     const selectedSeats = new Set();
@@ -415,12 +472,6 @@
             if (!response.ok) throw new Error('Failed to fetch auditorium');
             const auditorium = await response.json();
             roomCapacity = Number(auditorium.max_capacity) || 48;
-            document.getElementById('showMeta').innerHTML = `
-                <span>Date: ${date}</span>
-                <span>Time: ${time}</span>
-                <span>Room: ${room}</span>
-                <span>Seats: ${roomCapacity}</span>
-            `;
         } catch (error) {
             console.error(error);
             roomCapacity = 48;
