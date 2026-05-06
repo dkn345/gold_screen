@@ -91,6 +91,7 @@
         display: grid;
         grid-template-columns: 1.4fr .8fr;
         gap: 24px;
+        align-items: start;
     }
 
     /* the screen and ticket boxes */
@@ -175,53 +176,80 @@
     .seat-emoji {
         font-size: 1.2rem;  /* or whatever size you want */
     }
+
+    /* panel with ticket stuff */
     .summary {
         display: grid;
-        gap: 14px;
+        gap: 10px;
         color: var(--cream);
+        background-color: var(--black);
+        align-self: start;
+        height: fit-content;
     }
     .summary h2 {
-        margin: 0 0 8px 0;
+        margin: 0 0 4px 0;
         color: var(--gold);
+        font-family: 'GoldScreenFont';
+        letter-spacing: 0.03em;
+        font-size: 1.55rem;
     }
+    /* each section of summary */
     .summary .item {
         display: grid;
         gap: 4px;
-        padding: 12px 0;
+        padding: 30px 0;
         border-bottom: 1px solid rgba(255,255,255,.08);
     }
+
     .ticket-controls {
         display: grid;
-        gap: 10px;
-        margin-top: 10px;
+        gap: 6px;
+        margin-top: 6px;
     }
+    
+    /* quantity of tickets */
     .ticket-controls input {
         width: 100%;
         box-sizing: border-box;
-        padding: 12px;
+        border: none;
+        padding: 4px;
         border-radius: 10px;
-        border: 1px solid var(--gold);
         background: transparent;
         color: var(--cream);
-        font-size: 1rem;
+        font-family: 'TitleFont';
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin: 0;
     }
+
+    /* total */
+    #selectedSeatsText, #totalText {
+        font-size: 1.25rem;
+        color: var(--cream);
+        font-weight: 700;
+    }
+
     .actions {
         display: flex;
         gap: 12px;
-        margin-top: 18px;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 0;
     }
     .btn {
         border: 1px solid var(--gold);
         background: transparent;
         color: var(--gold);
-        padding: 12px 16px;
-        border-radius: 10px;
+        padding: 15px 28px;
         cursor: pointer;
         font-weight: 700;
+        font-family: 'TitleFont';
+        font-size: 1rem;
     }
     .btn.primary {
         background: var(--gold);
         color: var(--black);
+        border: none;
     }
     .hint {
         color: var(--gold);
@@ -331,7 +359,6 @@
                     <div>Total</div>
                     <strong id="totalText">$0.00</strong>
                 </div>
-                <div class="hint">Choose your seats, then continue to add tickets to your cart.</div>
                 <div class="actions">
                     <button class="btn" onclick="history.back()">Back</button>
                     <button class="btn primary" id="continueBtn">Continue</button>
