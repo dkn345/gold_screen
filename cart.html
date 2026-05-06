@@ -4,28 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/logo.png">
-    <title>Shopping Cart - The Gold Screen</title>
+    <title>Shopping Cart</title>
     <link rel="stylesheet" href="istyle.css">
     <style>
         .cart-container {
             max-width: 900px;
             margin: 40px auto;
+            margin-top: 80px;
             padding: 20px;
         }
         .cart-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #ccc;
-            padding: 15px 0;
+            padding: 20px 10px;
+            border-bottom: 1px solid var(--black);
+            margin: 12px 0;
+            font-family: 'TitleFont';
         }
         .cart-item p {
             margin: 5px 0;
         }
         .item-price {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
-            color: #d4af37;
+            color: var(--gold);
         }
         .empty-cart {
             text-align: center;
@@ -38,12 +41,12 @@
             font-size: 24px;
             font-weight: bold;
             padding: 20px 0;
-            color: #d4af37;
+            color: var(--gold);
         }
         .checkout-btn {
             padding: 10px 20px;
-            color: var(--gold, #d4af37);
-            border: var(--gold, #d4af37) 2px solid;
+            color: var(--gold);
+            border: var(--gold) 2px solid;
             background: transparent;
             font-family: 'TitleFont', Georgia, serif;
             font-size: 1.2rem;
@@ -60,12 +63,12 @@
             color: var(--red, #A3061C);
             background: transparent;
             border: 1px solid var(--red, #A3061C);
-            padding: 4px 12px;
-            border-radius: 4px;
+            padding: 8px 12px;
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: bold;
             transition: background 0.2s, color 0.2s;
+            font-family: 'TitleFont';
         }
         .remove-btn:hover {
             background: var(--red, #A3061C);
@@ -104,13 +107,13 @@
     </div>
 
     <div class="cart-container">
-        <h1>Your Cart</h1>
+        <h1 style="font-size: 60px;">Cart</h1>
         <div id="pending-booking-container"></div>
         <div id="cart-items-container">
             <div class="empty-cart">Your cart is empty</div>
         </div>
-        <div class="cart-total" style="text-align: right; border-top: 2px solid #d4af37; padding-top: 20px; margin-top: 20px;">
-            <div id="subtotal-row" style="font-size: 1.1rem; margin-bottom: 12px; color: #888;">
+        <div class="cart-total" style="text-align: right; padding-top: 20px; margin-top: 10px;">
+            <div id="subtotal-row" style="font-size: 1.1rem; margin-bottom: 12px; color: var(--black);">
                 Subtotal: <span id="cart-subtotal-label">$<span id="cart-subtotal">0.00</span></span>
             </div>
             <div id="discount-row" style="display: none; margin-bottom: 12px; background: linear-gradient(135deg, #8B6914, #b8860b); color: #fff; padding: 12px 18px; border-radius: 8px; text-align: left;">
@@ -120,15 +123,15 @@
                 </div>
                 <div style="font-size: 0.8rem; margin-top: 4px; opacity: 0.8;">Applied automatically from your membership</div>
             </div>
-            <div id="total-row" style="font-size: 1.6rem; color: #d4af37; font-weight: bold; margin-top: 8px;">
-                You Pay: $<span id="cart-total">0.00</span>
+            <div id="total-row" style="font-size: 1.6rem; color: var(--gold); font-weight: bold; margin-top: 8px; font-family: 'TitleFont';">
+                Total: $<span id="cart-total">0.00</span>
             </div>
             <div id="savings-row" style="display: none; font-size: 0.9rem; color: #d4af37; margin-top: 6px; font-weight: bold;">
                 You're saving $<span id="savings-amount">0.00</span> with your membership! 🎉
             </div>
         </div>
-        <div style="text-align: right; margin-top: 20px;">
-            <button class="checkout-btn" id="main-checkout-btn">Proceed to Checkout</button>
+        <div style="text-align: right; margin-top: 10px;">
+            <button class="checkout-btn" id="main-checkout-btn">Checkout</button>
         </div>
     </div>
 
@@ -202,7 +205,7 @@
                     <div class="cart-item">
                         <div>
                             <p><strong>${item.name}</strong></p>
-                            <p>Quantity: ${item.quantity}</p>
+                            <p style="font-size: 0.8rem;">Quantity: ${item.quantity}</p>
                         </div>
                         <div>
                             <p class="item-price">$${itemTotal}</p>
