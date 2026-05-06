@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/logo.png">
-    <title>Concessions - The Gold Screen</title>
+    <title>The Gold Screen</title>
     <link rel="stylesheet" href="istyle.css?v=5">
     <style>
         :root {
@@ -30,99 +30,158 @@
             padding: 24px;
         }
 
+        /* has title */
         .page-title {
             text-align: center;
             margin: 40px 0;
+            font-family: 'TitleFont';
+            font-weight: normal;
+            font-size: 1.5rem;
         }
 
         .page-title h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
         }
 
+        /* the grid of options */
         .concessions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
             margin-bottom: 40px;
+            align-items: stretch;
         }
 
         .item-card {
             background: var(--black);
-            border-radius: 18px;
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 10px 20px rgba(0, 0, 0, .2);
             display: flex;
-            flex-direction: column;
-            border: 1px solid #333;
+            flex-direction: row;
+            align-items: stretch;
+            height: 260px;
         }
 
         .item-img {
-            width: 100%;
-            height: 200px;
+            width: 200px;
+            height: auto;
+            min-height: 200px;
             object-fit: cover;
-            border-bottom: 2px solid var(--gold);
+            flex-shrink: 0;
         }
 
         .item-info {
-            padding: 20px;
+            padding: 12px 10px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .item-info .add-to-cart {
+            margin-top: auto;
         }
 
         .item-name {
-            margin: 0 0 10px 0;
-            color: var(--gold);
+            margin: 30px 0 3px 0;
+            color: var(--cream);
             font-size: 1.4rem;
-            font-family: 'TitleFont', sans-serif;
+            font-family: 'TitleFont';
+            letter-spacing: 0.05em;
+            text-align: center;
         }
 
         .item-price {
             font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             color: #fff;
+            padding: 0 5px;
+            text-align: center;
         }
 
         .add-to-cart {
             margin-top: auto;
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 8px;
             align-items: center;
+            padding: 5px 0;
         }
 
         .qty-input {
-            width: 60px;
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid var(--gold);
-            background: #222;
-            color: var(--cream);
-            font-size: 1rem;
-            text-align: center;
+            display: none;
+            border: none;
         }
 
-        .btn {
-            border: 1px solid var(--gold);
-            background: var(--gold);
-            color: var(--black);
-            padding: 10px 16px;
-            border-radius: 8px;
+        .qty-control {
+            display: flex;
+            gap: 0;
+            align-items: center;
+            height: 40px;
+            border:none;
+            border-radius: 6px;
+            background: transparent;
+            overflow: hidden;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .qty-btn {
+            width: 40px;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: var(--gold);
+            font-size: 1.5rem;
             cursor: pointer;
-            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
             transition: background 0.2s;
         }
 
+        .qty-btn:hover {
+            background: var(--gold);
+            color: var(--cream);
+        }
+
+        .qty-display {
+            width: 50px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cream);
+            font-family: 'TitleFont';
+            font-weight: bold;
+            border: none;
+        }
+
+        .btn {
+            border: 2px solid var(--gold);
+            background: transparent;
+            color: var(--gold);
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.2s;
+            font-family: 'TitleFont';
+            letter-spacing: 0.03em;
+        }
+
         .add-to-cart .btn {
-            flex-grow: 1;
+            flex-grow: 0;
+            flex-shrink: 0;
+            width: 100%;
         }
 
         .btn:hover {
-            background: #f4d06f;
-        }
-
-        .btn:active {
-            transform: translateY(2px);
+            background: var(--gold);
+            color: var(--black);
         }
 
         .continue-bar {
@@ -135,14 +194,15 @@
             position: sticky;
             bottom: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
-            border: 1px solid var(--gold);
             z-index: 100;
         }
 
         .continue-bar h2 {
             margin: 0;
+            margin-left: 10px;
             font-size: 1.5rem;
             width: auto;
+            color: var(--cream);
         }
 
         .btn-large {
@@ -176,8 +236,6 @@
     <div class="wrap">
         <div class="page-title">
             <h1>Concessions</h1>
-            <p style="color: #333; font-size: 1.1rem;">Enhance your movie experience with our delicious snacks and
-                drinks.</p>
         </div>
 
         <div class="concessions-grid" id="concessions-grid">
@@ -185,8 +243,8 @@
         </div>
 
         <div class="continue-bar">
-            <h2>Added to cart: <span id="cart-count">0</span> items</h2>
-            <button class="btn btn-large" onclick="window.location.href='cart.html?v=6'">Continue to Cart</button>
+            <h2><span id="cart-count">0</span> Items in Cart</h2>
+            <button class="btn btn-large" onclick="window.location.href='cart.html?v=6'">Continue</button>
         </div>
     </div>
 
@@ -217,8 +275,13 @@
                             <h3 class="item-name">${item.name}</h3>
                             <div class="item-price">$${Number(item.price).toFixed(2)}</div>
                             <div class="add-to-cart">
+                                <div class="qty-control" id="qty-control-${item.item_id}">
+                                    <button class="qty-btn" onclick="decreaseQty(${item.item_id})">−</button>
+                                    <div class="qty-display" id="qty-display-${item.item_id}">1</div>
+                                    <button class="qty-btn" onclick="increaseQty(${item.item_id})">+</button>
+                                </div>
                                 <input type="number" id="qty-${item.item_id}" class="qty-input" min="1" max="10" value="1">
-                                <button class="btn" onclick="addToCart(${item.item_id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})">Add</button>
+                                <button class="btn" onclick="addToCart(${item.item_id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})">Add to Cart</button>
                             </div>
                         </div>
                     </div>
@@ -226,6 +289,28 @@
             } catch (err) {
                 console.error(err);
                 document.getElementById('concessions-grid').innerHTML = '<p style="color:red;">Failed to load concessions.</p>';
+            }
+        }
+
+        function increaseQty(itemId) {
+            const display = document.getElementById(`qty-display-${itemId}`);
+            const input = document.getElementById(`qty-${itemId}`);
+            let qty = parseInt(display.textContent);
+            if (qty < 10) {
+                qty++;
+                display.textContent = qty;
+                input.value = qty;
+            }
+        }
+
+        function decreaseQty(itemId) {
+            const display = document.getElementById(`qty-display-${itemId}`);
+            const input = document.getElementById(`qty-${itemId}`);
+            let qty = parseInt(display.textContent);
+            if (qty > 1) {
+                qty--;
+                display.textContent = qty;
+                input.value = qty;
             }
         }
 
@@ -256,12 +341,12 @@
             const btn = event.target;
             const origText = btn.textContent;
             btn.textContent = 'Added!';
-            btn.style.background = '#d4af37';
-            btn.style.color = '#fff';
+            btn.style.background = '#E19B01';
+            btn.style.color = '#111';
             setTimeout(() => {
                 btn.textContent = origText;
-                btn.style.background = 'var(--gold)';
-                btn.style.color = 'var(--black)';
+                btn.style.background = 'transparent';
+                btn.style.color = '#E19B01';
                 qtyInput.value = 1;
             }, 1000);
         }
