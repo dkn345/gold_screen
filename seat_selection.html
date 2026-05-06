@@ -27,6 +27,7 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 24px;
+        margin-top: -20px;
     }
 
     /* top box */
@@ -104,7 +105,7 @@
     .screen {
         border-radius: 100px;
         background-color: var(--cream);
-        margin-bottom: 24px;
+        margin-bottom: 20px;
         text-align: center;
         font-size: 0.8rem;
         text-transform: uppercase;
@@ -120,6 +121,8 @@
         grid-template-columns: repeat(10, minmax(0, 1fr));
         gap: 10px;
     }
+
+    /*the seats themselves*/
     .seat {
         aspect-ratio: 1 / 1;
         border-radius: 10px 10px 6px 6px;
@@ -129,6 +132,7 @@
         cursor: pointer;
         font-weight: 700;
     }
+
     .seat:hover {
         background: rgba(225,155,1,.12);
     }
@@ -210,19 +214,27 @@
         color: var(--gold);
         font-size: .95rem;
     }
+
+    /* the row with legend stuff */
     .legend {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin: 0 0 14px 0;
+        margin-bottom: 20px;
         color: var(--cream);
         font-size: 0.92rem;
     }
+
+    /* the legend text */
     .legend-item {
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        letter-spacing: 0.03em;
+        font-size: 0.9rem;
     }
+
+    /* the legend boxes */
     .legend-swatch {
         width: 14px;
         height: 14px;
@@ -279,12 +291,12 @@
 
         <div class="grid">
             <div class="panel">
-                <div class="screen"> SCREEN </div>
-                <div class="legend">
-                    <span class="legend-item"><span class="legend-swatch vip"></span>VIP row</span>
-                    <span class="legend-item"><span class="legend-swatch accessible"></span>Accessible seats</span>
-                    <span class="legend-item"><span class="legend-swatch"></span>Regular seats</span>
+                 <div class="legend">
+                    <span class="legend-item"><span class="legend-swatch vip"></span>VIP Row</span>
+                    <span class="legend-item"><span class="legend-swatch accessible"></span>Accessible Seats</span>
+                    <span class="legend-item"><span class="legend-swatch"></span>Open Seats</span>
                 </div>
+                <div class="screen"> SCREEN </div>
                 <div class="seats" id="seatGrid"></div>
             </div>
 
