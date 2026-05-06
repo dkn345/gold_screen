@@ -189,6 +189,7 @@ a {
     height: 100%;
     object-fit: cover; /* This prevents the image from squishing */
     display: block;
+    border-radius: 12px;
 }
 
 /* movie text container */

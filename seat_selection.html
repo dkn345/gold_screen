@@ -246,6 +246,9 @@
         font-family: 'TitleFont';
         font-size: 1rem;
     }
+    .btn:hover {
+        background: rgba(225,155,1,.12);
+    }
     .btn.primary {
         background: var(--gold);
         color: var(--black);
@@ -285,7 +288,6 @@
     }
     .legend-swatch.vip {
         border: 1px solid var(--red);
-        background: rgba(244, 124, 111, 0.35);
     }
     .legend-swatch.accessible {
         border-color: var(--cream);
@@ -512,7 +514,7 @@
                 const isAccessible = accessibleSeats.has(id);
                 
                 // Allow label to show whichever applies
-            const seatLabel = isVip ? 'VIP' : (isAccessible ? '<span class="seat-emoji">♿︎</span>' : '');                
+            const seatLabel = isVip ? '<span class="seat-emoji">★</span>' : (isAccessible ? '<span class="seat-emoji">♿︎</span>' : '');                
                 seats.push(`<button class="seat ${taken ? 'taken' : ''} ${selected ? 'selected' : ''} ${isVip ? 'vip' : ''} ${isAccessible ? 'accessible' : ''}" data-seat="${id}" ${taken ? 'disabled' : ''}>${id}${seatLabel ? `<span class="seat-label">${seatLabel}</span>` : ''}</button>`);
             }
         }
